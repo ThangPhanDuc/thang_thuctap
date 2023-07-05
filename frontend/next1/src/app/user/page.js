@@ -35,8 +35,9 @@ function User() {
 
   return (
     <div class="card">
+      
       <img
-        src="../images/user.png"
+        src={ "http://localhost:8000/"+user.img  }
         className="card-img-top "
         alt="User Image"
         style={{ width: "5rem" }}
