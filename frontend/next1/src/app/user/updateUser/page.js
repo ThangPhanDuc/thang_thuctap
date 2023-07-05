@@ -63,7 +63,6 @@ function UpdateUser() {
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     setSelectedImage(file);
-
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setSelectedImageUrl(imageUrl);
@@ -74,59 +73,104 @@ function UpdateUser() {
 
 
   return (
-
-    <div class="card">
-      <form onSubmit={handleUpdate}  >
-
-        <div class="card-body">
-          <div class="form-group">
-            <img
-              src={selectedImageUrl ? selectedImageUrl : "http://localhost:8000/" + user.img}
-              className="card-img-top "
-              alt="User Image"
-              style={{ width: "5rem" }}
-            />
-            <input type="file" class="form-control-file"
-              // onChange={(event) => {
-              //   console.log(event.target.files[0]);
-              //   setSelectedImage(event.target.files[0]);
-              // }}
-              onChange={handleImageChange}
-            />
+    <section style={{ backgroundColor: "#eee" }}>
+      <div className="container py-5">
+        <div className="row">
+          <div className="col">
+            <nav aria-label="breadcrumb" className="bg-light rounded-3 p-3 mb-4">
+              <ol className="breadcrumb mb-0">
+                <li className="breadcrumb-item">
+                  <a href="#">Home</a>
+                </li>
+                <li className="breadcrumb-item">
+                  <a href="#">User</a>
+                </li>
+                <li className="breadcrumb-item active" aria-current="page">
+                  Update User
+                </li>
+              </ol>
+            </nav>
           </div>
-          <div class="form-group">
-            <label for="name">Name:</label>
-            <input
-              value={user.name}
-              onChange={(event) => setUser({ ...user, name: event.target.value })}
-              name="name" class="form-control" placeholder="" />
-          </div>
-          <div class="form-group">
-            <label for="age">Age:</label>
-            <input
-              value={user.age}
-              onChange={(event) => setUser({ ...user, age: event.target.value })}
-              type="number" class="form-control" placeholder="" />
-          </div>
-          <div class="form-group">
-            <label for="phone">Phone:</label>
-            <input
-              value={user.phone}
-              onChange={(event) => setUser({ ...user, phone: event.target.value })}
-              type="text" class="form-control" placeholder="" />
-          </div>
-          <div class="form-group">
-            <label for="address">Address:</label>
-            <input
-              value={user.address}
-              onChange={(event) => setUser({ ...user, address: event.target.value })}
-              type="text" class="form-control" placeholder="" />
-          </div>
-          <button type="submit" class="btn btn-primary">Update</button>
         </div>
-      </form>
-    </div>
+        <form onSubmit={handleUpdate} >
+          <div className="row">
+            <div className="col-lg-4">
+              <div className="card mb-4">
+                <div className="card-body text-center">
+                  <img
+                    src={selectedImageUrl ? selectedImageUrl : "http://localhost:8000/" + user.img}
+                    alt="avatar"
+                    className="rounded-circle img-fluid"
+                    style={{ width: 150 }}
+                  />
+                  <h5 className="my-3">{user.name}</h5>
+                  <div className="d-flex justify-content-center mb-2">
+                    <div class="mb-3">
+                      <label for="formFile" class="form-label">Update profile picture</label>
+                      <input class="form-control" type="file" id="formFile"
+                        // onChange={(event) => {
+                        //   console.log(event.target.files[0]);
+                        //   setSelectedImage(event.target.files[0]);
+                        // }}
+                        onChange={handleImageChange}
+                      />
+                    </div>
 
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <div className="col-lg-8">
+              <div className="card mb-4">
+                <div className="card-body">
+                  <div className="row">
+                    <div className="col-sm-3">
+                      <p className="mb-0">Full Name</p>
+                    </div>
+                    <input
+                      value={user.name}
+                      onChange={(event) => setUser({ ...user, name: event.target.value })}
+                      name="name" class="form-control col-sm-9 w-75 " placeholder="" />
+                  </div>
+                  <hr />
+                  <div className="row">
+                    <div className="col-sm-3">
+                      <p className="mb-0">Age</p>
+                    </div>
+                    <input
+                      value={user.age}
+                      onChange={(event) => setUser({ ...user, age: event.target.value })}
+                      type="number" class="form-control col-sm-9 w-75" placeholder="" />
+                  </div>
+                  <hr />
+                  <div className="row">
+                    <div className="col-sm-3">
+                      <p className="mb-0">Phone</p>
+                    </div>
+                    <input
+                      value={user.phone}
+                      onChange={(event) => setUser({ ...user, phone: event.target.value })}
+                      type="text" class="form-control col-sm-9 w-75" placeholder="" />
+                  </div>
+                  <hr />
+                  <div className="row">
+                    <div className="col-sm-3">
+                      <p className="mb-0">Address</p>
+                    </div>
+                    <input
+                      value={user.address}
+                      onChange={(event) => setUser({ ...user, address: event.target.value })}
+                      type="text" class="form-control col-sm-9 w-75" placeholder="" />
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary w-25 mx-auto mb-2">Update</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
   )
 }
 

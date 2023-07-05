@@ -3,6 +3,7 @@
 import axios from "../api/axios";
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from "react";
+import 'bootstrap/dist/css/bootstrap.css';
 
 function User() {
   const [user, setUser] = useState({});
@@ -34,23 +35,109 @@ function User() {
   }
 
   return (
-    <div class="card">
-      
-      <img
-        src={ "http://localhost:8000/"+user.img  }
-        className="card-img-top "
-        alt="User Image"
-        style={{ width: "5rem" }}
-      />
-      <div class="card-body">
-        <h1 className="card-title">User name: {user.name}</h1>
-        <p className="card-text">Email: {user.email}</p>
-        <p className="card-text">Age: {user.age}</p>
-        <p className="card-text">Phone: {user.phone}</p>
-        <p className="card-text">Address: {user.address}</p>
-        <button type="button" className="btn btn-primary" onClick={updateUser}>Chỉnh sửa thông tin cá nhân</button>
+    <section style={{ backgroundColor: "#eee" }}>
+      <div className="container py-5">
+        <div className="row">
+          <div className="col">
+            <nav aria-label="breadcrumb" className="bg-light rounded-3 p-3 mb-4">
+              <ol className="breadcrumb mb-0">
+                <li className="breadcrumb-item">
+                  <a href="#">Home</a>
+                </li>
+                <li className="breadcrumb-item">
+                  <a href="#">User</a>
+                </li>
+                <li className="breadcrumb-item active" aria-current="page">
+                  User Profile
+                </li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-lg-4">
+            <div className="card mb-4">
+              <div className="card-body text-center">
+                <img
+                  src={"http://localhost:8000/" + user.img}
+                  alt="avatar"
+                  className="rounded-circle img-fluid"
+                  style={{ width: 150 }}
+                />
+                <h5 className="my-3">{user.name}</h5>
+                {/* <p className="text-muted mb-1">Full Stack Developer</p>
+                <p className="text-muted mb-4">Bay Area, San Francisco, CA</p> */}
+                <div className="d-flex justify-content-center mb-2">
+                  {/* <button type="button" className="btn btn-primary">
+                    Follow
+                  </button>
+                  <button type="button" className="btn btn-outline-primary ms-1">
+                    Message
+                  </button> */}
+                  <button
+                    onClick={updateUser}
+                    type="button" className="btn btn-outline-primary ms-1">
+                    Update Profile
+                  </button>
+                </div>
+              </div>
+            </div>
+         
+          </div>
+          <div className="col-lg-8">
+            <div className="card mb-4">
+              <div className="card-body">
+                <div className="row">
+                  <div className="col-sm-3">
+                    <p className="mb-0">Full Name</p>
+                  </div>
+                  <div className="col-sm-9">
+                    <p className="text-muted mb-0">{user.name}</p>
+                  </div>
+                </div>
+                <hr />
+                <div className="row">
+                  <div className="col-sm-3">
+                    <p className="mb-0">Email</p>
+                  </div>
+                  <div className="col-sm-9">
+                    <p className="text-muted mb-0">{user.email}</p>
+                  </div>
+                </div>
+                <hr />
+                <div className="row">
+                  <div className="col-sm-3">
+                    <p className="mb-0">Age</p>
+                  </div>
+                  <div className="col-sm-9">
+                    <p className="text-muted mb-0">{user.age}</p>
+                  </div>
+                </div>
+                <hr />
+                <div className="row">
+                  <div className="col-sm-3">
+                    <p className="mb-0">Phone</p>
+                  </div>
+                  <div className="col-sm-9">
+                    <p className="text-muted mb-0">{user.phone}</p>
+                  </div>
+                </div>
+                <hr />
+                <div className="row">
+                  <div className="col-sm-3">
+                    <p className="mb-0">Address</p>
+                  </div>
+                  <div className="col-sm-9">
+                    <p className="text-muted mb-0">{user.address}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
+
 
   )
 }
