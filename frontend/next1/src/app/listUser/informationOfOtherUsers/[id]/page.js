@@ -1,15 +1,18 @@
 "use client";
 
-import axios from "../api/axios";
+import axios from "../../../api/axios";
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from "react";
 import 'bootstrap/dist/css/bootstrap.css';
+import Link from 'next/link'
 
-function User() {
+function InformationOfOtherUsers({ params }) {
+  const { id } = params;
   const [user, setUser] = useState({});
+  const [userIsLogin, setUserIsLogin] = useState({});
 
   useEffect(() => {
-    const getUser = async () => {
+    const getUserById = async () => {
       const token = localStorage.getItem('token');
       const config = {
         headers: {
@@ -17,16 +20,34 @@ function User() {
         }
       };
       try {
-        const response = await axios.get('/user', config);
+        const response = await axios.get(`/getUserById/${id}`, config);
         const userInfo = response.data;
         setUser(userInfo);
-        console.log(user);
+        console.log(response.data);
       } catch (error) {
         console.error(error);
       }
     };
+    getUserById();
 
-    getUser();
+    //
+    const getUserIsLogin = async () => {
+      const token = localStorage.getItem('token');
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      };
+      try {
+        const response = await axios.get(`/user`, config);
+        const userInfo = response.data;
+        setUserIsLogin(userInfo);
+        console.log(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getUserIsLogin();
   }, []);
 
   const router = useRouter();
@@ -65,24 +86,31 @@ function User() {
                   style={{ width: 150 }}
                 />
                 <h5 className="my-3">{user.name}</h5>
-                {/* <p className="text-muted mb-1">Full Stack Developer</p>
-                <p className="text-muted mb-4">Bay Area, San Francisco, CA</p> */}
                 <div className="d-flex justify-content-center mb-2">
+                  {user.id == userIsLogin.id &&
+                    <button
+                      type="button"
+                      className="btn btn-outline-dark"
+                      data-mdb-ripple-color="dark"
+                      style={{ zIndex: 1 }}
+                    >
+                      <Link href="/user/updateUser" >Edit profile</Link>
+
+
+                    </button>
+                  }
+
                   {/* <button type="button" className="btn btn-primary">
                     Follow
                   </button>
                   <button type="button" className="btn btn-outline-primary ms-1">
                     Message
                   </button> */}
-                  <button
-                    onClick={updateUser}
-                    type="button" className="btn btn-outline-primary ms-1">
-                    Edit Profile
-                  </button>
+
                 </div>
               </div>
             </div>
-         
+
           </div>
           <div className="col-lg-8">
             <div className="card mb-4">
@@ -142,4 +170,4 @@ function User() {
   )
 }
 
-export default User
+export default InformationOfOtherUsers

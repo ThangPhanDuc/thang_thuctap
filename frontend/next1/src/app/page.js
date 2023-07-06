@@ -25,8 +25,7 @@ export default function Home() {
         localStorage.setItem("token", res.data.access_token)
         // Cookies.set('token', res.data.message);
       }
-      router.push("/user");
-      // console.log(res.data.access_token);
+      router.push("/listUser");
     } catch (error) {
       console.log(error);
     }

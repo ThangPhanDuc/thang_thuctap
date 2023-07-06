@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use app\Models\User;
 
 class UserController extends Controller
 {
@@ -39,6 +40,18 @@ class UserController extends Controller
         $user->save();
 
         return response()->json(['message' => 'User updated successfully.']);
+    }
+
+    public function getAllUser(){
+        $users = User::all();
+        return $users;
+    }
+
+    public function getUserById(Request $request){
+        $id = $request->id;
+
+        $user = User::findOrFail($id);
+        return $user;
     }
 
   

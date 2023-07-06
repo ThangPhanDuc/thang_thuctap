@@ -16,14 +16,28 @@ use App\Http\Controllers\UserController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+
 
 Route::post('/register', [AuthController::class, 'register']);
 
 Route::post('/login', [AuthController::class, 'login']);
 
-Route::middleware('auth:sanctum')->post('/updateUser', [UserController::class,'updateUser']);
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
 
+// Route::middleware('auth:sanctum')->post('/updateUser', [UserController::class,'updateUser']);
 
+// Route::middleware('auth:sanctum')->get('/getAllUser', [UserController::class,'getAllUser']);
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+
+    Route::post('/updateUser', [UserController::class, 'updateUser']);
+
+    Route::get('/getAllUser', [UserController::class, 'getAllUser']);
+
+    Route::get('/getUserById/{id}', [UserController::class, 'getUserById']);
+});
