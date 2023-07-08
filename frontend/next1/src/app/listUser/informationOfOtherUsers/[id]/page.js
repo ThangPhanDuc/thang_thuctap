@@ -114,51 +114,8 @@ function InformationOfOtherUsers({ params }) {
           </div>
           <div className="col-lg-8">
             <div className="card mb-4">
-              <div className="card-body">
-                <div className="row">
-                  <div className="col-sm-3">
-                    <p className="mb-0">Full Name</p>
-                  </div>
-                  <div className="col-sm-9">
-                    <p className="text-muted mb-0">{user.name}</p>
-                  </div>
-                </div>
-                <hr />
-                <div className="row">
-                  <div className="col-sm-3">
-                    <p className="mb-0">Email</p>
-                  </div>
-                  <div className="col-sm-9">
-                    <p className="text-muted mb-0">{user.email}</p>
-                  </div>
-                </div>
-                <hr />
-                <div className="row">
-                  <div className="col-sm-3">
-                    <p className="mb-0">Age</p>
-                  </div>
-                  <div className="col-sm-9">
-                    <p className="text-muted mb-0">{user.age}</p>
-                  </div>
-                </div>
-                <hr />
-                <div className="row">
-                  <div className="col-sm-3">
-                    <p className="mb-0">Phone</p>
-                  </div>
-                  <div className="col-sm-9">
-                    <p className="text-muted mb-0">{user.phone}</p>
-                  </div>
-                </div>
-                <hr />
-                <div className="row">
-                  <div className="col-sm-3">
-                    <p className="mb-0">Address</p>
-                  </div>
-                  <div className="col-sm-9">
-                    <p className="text-muted mb-0">{user.address}</p>
-                  </div>
-                </div>
+              <div className="card-body" dangerouslySetInnerHTML={{ __html: user.profile }}>
+
               </div>
             </div>
           </div>

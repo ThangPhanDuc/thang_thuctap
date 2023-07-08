@@ -28,6 +28,7 @@ export default function Home() {
       router.push("/listUser");
     } catch (error) {
       console.log(error);
+      alert("Incorrect Email or Password")
     }
   }
 

@@ -69,19 +69,14 @@ export default function listUser() {
                             className="img-fluid img-thumbnail mt-4 mb-2"
                             style={{ width: 150, zIndex: 1 }}
                         />
-                        
-                            <button
-                                type="button"
-                                className="btn btn-outline-dark"
-                                data-mdb-ripple-color="dark"
-                                style={{ zIndex: 1 }}
-                            >
-                                <Link href="/user" >View profile</Link>
-                                
-                               
-                            </button>
-                       
-
+                        <button
+                            type="button"
+                            className="btn btn-outline-dark"
+                            data-mdb-ripple-color="dark"
+                            style={{ zIndex: 1 }}
+                        >
+                            <Link href="/user" >View profile</Link>
+                        </button>
                     </div>
                     <div className="ms-3" style={{ marginTop: 130 }}>
                         <h5>{user.name}</h5>
@@ -94,7 +89,7 @@ export default function listUser() {
                 >
                     <div className="d-flex justify-content-end text-center py-1">
                         <div>
-                            <p className="mb-1 h5">253</p>
+                            <p className="mb-1 h5">250</p>
                             <p className="small text-muted mb-0">Photos</p>
                         </div>
                         <div className="px-3">
@@ -102,15 +97,12 @@ export default function listUser() {
                             <p className="small text-muted mb-0">Followers</p>
                         </div>
                         <div>
-                            <p className="mb-1 h5">478</p>
+                            <p className="mb-1 h5">425</p>
                             <p className="small text-muted mb-0">Following</p>
                         </div>
                     </div>
                 </div>
-
             </div>
-
-
 
             <h1>List user</h1>
             {users.map((user, index) => {
@@ -135,14 +127,8 @@ export default function listUser() {
                             </div>
                         </Link>
                     </div>
-
                 );
             })}
-
-
-
         </div>
-
-
     )
 }

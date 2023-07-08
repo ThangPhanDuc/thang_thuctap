@@ -34,6 +34,7 @@ class UserController extends Controller
         $user->age = $request->age;
         $user->phone = $request->phone;
         $user->address = $request->address;
+        $user->profile=$request->profile;
         if (isset($imageName)) {
             $user->img = 'uploads/' . $imageName;
         }

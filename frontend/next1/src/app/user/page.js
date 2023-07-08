@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useState, useEffect } from "react";
 import 'bootstrap/dist/css/bootstrap.css';
 
+
 function User() {
   const [user, setUser] = useState({});
 
@@ -36,6 +37,9 @@ function User() {
 
   return (
     <section style={{ backgroundColor: "#eee" }}>
+
+
+      
       <div className="container py-5">
         <div className="row">
           <div className="col">
@@ -64,16 +68,10 @@ function User() {
                   className="rounded-circle img-fluid"
                   style={{ width: 150 }}
                 />
-                <h5 className="my-3">{user.name}</h5>
-                {/* <p className="text-muted mb-1">Full Stack Developer</p>
-                <p className="text-muted mb-4">Bay Area, San Francisco, CA</p> */}
+                   <h5 className="my-3" >
+                    {user.name}
+                  </h5>
                 <div className="d-flex justify-content-center mb-2">
-                  {/* <button type="button" className="btn btn-primary">
-                    Follow
-                  </button>
-                  <button type="button" className="btn btn-outline-primary ms-1">
-                    Message
-                  </button> */}
                   <button
                     onClick={updateUser}
                     type="button" className="btn btn-outline-primary ms-1">
@@ -86,13 +84,16 @@ function User() {
           </div>
           <div className="col-lg-8">
             <div className="card mb-4">
-              <div className="card-body">
+              <div className="card-body" dangerouslySetInnerHTML={{ __html: user.profile }}>
+
+              </div>
+              {/* <div className="card-body">
                 <div className="row">
                   <div className="col-sm-3">
                     <p className="mb-0">Full Name</p>
                   </div>
                   <div className="col-sm-9">
-                    <p className="text-muted mb-0">{user.name}</p>
+                    <p className="text-muted mb-0" dangerouslySetInnerHTML={{ __html: user.name }}></p>
                   </div>
                 </div>
                 <hr />
@@ -131,7 +132,7 @@ function User() {
                     <p className="text-muted mb-0">{user.address}</p>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

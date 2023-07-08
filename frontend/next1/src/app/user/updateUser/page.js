@@ -4,11 +4,16 @@ import axios from "../../api/axios";
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from "react";
 
+import { useRef } from 'react';
+import { Editor } from '@tinymce/tinymce-react';
+
 function UpdateUser() {
   const [user, setUser] = useState({});
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedImageUrl, setSelectedImageUrl] = useState("");
   const router = useRouter();
+
+  const editorRef = useRef();
 
   useEffect(() => {
     const getUser = async () => {
@@ -41,8 +46,9 @@ function UpdateUser() {
     formData.append("age", user.age);
     formData.append("phone", user.phone);
     formData.append("address", user.address);
+    formData.append("profile",editorRef.current.getContent())
 
-    // console.log(formData.getAll('age'));
+    console.log(formData.getAll('age'));
 
     try {
       await axios.post("/updateUser", formData, {
@@ -71,10 +77,20 @@ function UpdateUser() {
     }
   }
 
+  // const [profile, setProfile] = useState();
+  // function updateProfile() {
+  //   console.log(editorRef.current.getContent());
+  //   setProfile(editorRef.current.getContent());
+  // }
+
 
   return (
     <section style={{ backgroundColor: "#eee" }}>
+     
+
       <div className="container py-5">
+
+
         <div className="row">
           <div className="col">
             <nav aria-label="breadcrumb" className="bg-light rounded-3 p-3 mb-4">
@@ -93,6 +109,7 @@ function UpdateUser() {
           </div>
         </div>
         <form onSubmit={handleUpdate} >
+
           <div className="row">
             <div className="col-lg-4">
               <div className="card mb-4">
@@ -103,7 +120,9 @@ function UpdateUser() {
                     className="rounded-circle img-fluid"
                     style={{ width: 150 }}
                   />
-                  <h5 className="my-3">{user.name}</h5>
+                  <h5 className="my-3" dangerouslySetInnerHTML={{ __html: user.name }} >
+                  </h5>
+
                   <div className="d-flex justify-content-center mb-2">
                     <div class="mb-3">
                       <label for="formFile" class="form-label">Update profile picture</label>
@@ -119,11 +138,15 @@ function UpdateUser() {
                   </div>
                 </div>
               </div>
-
             </div>
             <div className="col-lg-8">
               <div className="card mb-4">
-                <div className="card-body">
+                <Editor
+                  onInit={(evt, editor) => editorRef.current = editor}
+                />
+                <button type="submit" class="btn btn-primary w-25 mx-auto mb-2">Update</button>
+
+                {/* <div className="card-body">
                   <div className="row">
                     <div className="col-sm-3">
                       <p className="mb-0">Full Name</p>
@@ -131,7 +154,8 @@ function UpdateUser() {
                     <input
                       value={user.name}
                       onChange={(event) => setUser({ ...user, name: event.target.value })}
-                      name="name" class="form-control col-sm-9 w-75 " placeholder="" />
+                      name="name" class="form-control col-sm-9 w-75 " placeholder=""
+                    />
                   </div>
                   <hr />
                   <div className="row">
@@ -164,7 +188,7 @@ function UpdateUser() {
                       type="text" class="form-control col-sm-9 w-75" placeholder="" />
                   </div>
                 </div>
-                <button type="submit" class="btn btn-primary w-25 mx-auto mb-2">Update</button>
+                <button type="submit" class="btn btn-primary w-25 mx-auto mb-2">Update</button> */}
               </div>
             </div>
           </div>
