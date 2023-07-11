@@ -42,41 +42,4 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    ///
-    // public function friends()
-    // {
-    //     return $this->belongsToMany(User::class, 'friends', 'user_id', 'friend_id')
-    //         ->wherePivot('status', 'accepted'); // Lấy chỉ các bạn bè đã được chấp nhận
-    // }
-
-    // public function friendRequests()
-    // {
-    //     return $this->belongsToMany(User::class, 'friends','friend_id',  'user_id')
-    //         ->wherePivot('status', 'pending'); // Lấy chỉ các yêu cầu kết bạn đang chờ xử lý
-    // }
-
-    // public function sendFriendRequest(User $user)
-    // {
-    //     $this->friends()->attach($user->id, ['status' => 'pending']);
-    // }
-
-    // public function acceptFriendRequest(User $user)
-    // {
-    //     $this->friendRequests()->updateExistingPivot($user->id, ['status' => 'accepted']);
-    // }
-
-    // public function unfriend(User $user)
-    // {
-    //     $this->friends()->detach($user->id);
-    //     $this->friendRequests()->detach($user->id);
-    // }
-
-    // public function friendRequestsSent()
-    // {
-    //     // return $this->belongsToMany(User::class, 'friend_requests', 'friend_id', 'user_id')
-    //     //     ->withPivot('status')
-    //     //     ->wherePivot('status', 'pending');
-    //     return $this->hasMany(Friend::class, 'friend_id');
-    // }
-
 }
