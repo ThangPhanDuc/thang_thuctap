@@ -143,6 +143,8 @@ function UpdateUser() {
               <div className="card mb-4">
                 <Editor
                   onInit={(evt, editor) => editorRef.current = editor}
+                  initialValue={user.profile}
+                  
                 />
                 <button type="submit" class="btn btn-primary w-25 mx-auto mb-2">Update</button>
 

@@ -50,8 +50,5 @@ class AuthController extends Controller
 
     }
 
-    public function test()
-    {
-        return "12312";
-    }
+    
 }
