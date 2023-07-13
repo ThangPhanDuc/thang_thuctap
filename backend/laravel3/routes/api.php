@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FriendController;
+use App\Http\Controllers\ChatController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,4 +39,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::post('/updateStatusFriend', [FriendController::class, 'updateStatusFriend']);
 
+    Route::get('/index', [UserController::class, 'index']);
+
+    Route::post('/message', [ChatController::class, 'message']);
 });

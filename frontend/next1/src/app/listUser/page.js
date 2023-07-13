@@ -6,70 +6,81 @@ import { useState, useEffect } from "react";
 import 'bootstrap/dist/css/bootstrap.css';
 import Link from 'next/link'
 
-export default function listUser() {
+export default function ListUser() {
     const [users, setUsers] = useState([]);
     const [user, setUser] = useState({});
     const [friendStatus, setFriendStatus] = useState([]);
+    const [totalPages, setTotalPages] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
-        const getAllUser = async () => {
-            const token = localStorage.getItem('token');
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            };
-            try {
-                const response = await axios.get('/getAllUser', config);
-                setUsers(response.data);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-        getAllUser();
-
-        const getUser = async () => {
-            const token = localStorage.getItem('token');
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            };
-            try {
-                const response = await axios.get('/user', config);
-                const userInfo = response.data;
-                setUser(userInfo);
-            } catch (error) {
-                console.error(error);
-            }
-        };
         getUser();
     }, []);
+    const getUser = async () => {
+        const token = localStorage.getItem('token');
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        };
+        try {
+            const response = await axios.get('/user', config);
+            const userInfo = response.data;
+            setUser(userInfo);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    useEffect(() => {
+        getAllUser();
+    }, [currentPage]);
+    const getAllUser = async () => {
+        const token = localStorage.getItem('token');
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        };
+        try {
+            const response = await axios.get(`/index?page=${currentPage }`, config);
+            setUsers(response.data.data);
+            setTotalPages(response.data.last_page)
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const handlePageChange = (page) => {
+        if(page>totalPages) return 0;
+        if(page>=1||page<=totalPages){
+            setCurrentPage(page);
+        }
+        
+    };
 
     useEffect(() => {
         if (user.id) {
-            const getFriendStatusByUserId = async () => {
-                const token = localStorage.getItem('token');
-                const config = {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                };
-                try {
-                    const response = await axios.get(`/getFriendStatusByUserId/${user.id}`, config);
-                    const friendStatus = response.data;
-                    setFriendStatus(friendStatus);
-                    console.log(response.data);
-                } catch (error) {
-                    console.error(error);
-                }
-            };
-
-
             getFriendStatusByUserId();
         }
-    });
+    }, [user]);
 
+    const getFriendStatusByUserId = async () => {
+        const token = localStorage.getItem('token');
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        };
+        try {
+            const response = await axios.get(`/getFriendStatusByUserId/${user.id}`, config);
+            const friendStatus = response.data;
+            setFriendStatus(friendStatus);
+            console.log(response.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     const updateStatusFriend = async (friend_id, status) => {
         const token = localStorage.getItem('token');
@@ -83,24 +94,6 @@ export default function listUser() {
                 },
             });
             console.log("update");
-
-            const getFriendStatusByUserId = async () => {
-                const token = localStorage.getItem('token');
-                const config = {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                };
-                try {
-                    const response = await axios.get(`/getFriendStatusByUserId/${user.id}`, config);
-                    const friendStatus = response.data;
-                    setFriendStatus(friendStatus);
-                    console.log(response.data);
-                } catch (error) {
-                    console.error(error);
-                }
-            };
-
 
             getFriendStatusByUserId();
         } catch (error) {
@@ -127,7 +120,16 @@ export default function listUser() {
                             className="img-fluid img-thumbnail mt-4 mb-2"
                             style={{ width: 150, zIndex: 1 }}
                         />
+                         <button
+                            type="button"
+                            className="btn btn-outline-dark"
+                            data-mdb-ripple-color="dark"
+                            style={{ zIndex: 1 }}
+                        >
+                            <Link href="/user" >View profile</Link>
+                        </button>
                     </div>
+                   
                     <div className="ms-3" style={{ marginTop: 130 }}>
                         <h5>{user.name}</h5>
                         <p>{user.email}</p>
@@ -137,24 +139,7 @@ export default function listUser() {
                     className="p-4 text-black"
                     style={{ backgroundColor: "#f8f9fa" }}
                 >
-                    <div className="mt-1 mr-1  d-flex ">
-                        <button
-                            type="button"
-                            className="btn btn-outline-dark"
-                            data-mdb-ripple-color="dark"
-                            style={{ zIndex: 1 }}
-                        >
-                            <Link href="/user" >View profile</Link>
-                        </button>
-                        <button
-                            type="button"
-                            className="btn btn-outline-dark"
-                            data-mdb-ripple-color="dark"
-                            style={{ zIndex: 1 }}
-                        >
-                            <Link href="" >Friend request</Link>
-                        </button>
-                    </div>
+                   
                     <div className="d-flex justify-content-end text-center py-1">
                         <div>
                             <p className="mb-1 h5">250</p>
@@ -242,6 +227,33 @@ export default function listUser() {
                     );
                 })}
             </div>
+
+            <nav aria-label="...">
+                <ul className="pagination justify-content-center mt-4 mb-5">
+                    <li className="page-item ">
+                        <button
+                            onClick={() => handlePageChange(currentPage-1)}
+                            className="page-link">Previous</button>
+                    </li>
+                    {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
+                        <li className="page-item" key={page}>
+                            <button
+                                onClick={() => handlePageChange(page)}
+                                className={`page-link ${currentPage === page ? 'active' : ''}`}>
+                                {page}
+                            </button>
+                        </li>
+                    ))}
+
+                    <li className="page-item">
+                        <button
+                            onClick={() => handlePageChange(currentPage+1)}
+                            className="page-link" >
+                            Next
+                        </button>
+                    </li>
+                </ul>
+            </nav>
 
         </div>
     )

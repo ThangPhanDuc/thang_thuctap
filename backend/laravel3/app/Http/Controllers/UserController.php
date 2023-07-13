@@ -34,7 +34,7 @@ class UserController extends Controller
         $user->age = $request->age;
         $user->phone = $request->phone;
         $user->address = $request->address;
-        $user->profile=$request->profile;
+        $user->profile = $request->profile;
         if (isset($imageName)) {
             $user->img = 'uploads/' . $imageName;
         }
@@ -43,18 +43,24 @@ class UserController extends Controller
         return response()->json(['message' => 'User updated successfully.']);
     }
 
-    public function getAllUser(){
+    public function getAllUser()
+    {
         $users = User::all();
         return $users;
     }
 
-    public function getUserById(Request $request){
-        $id = $request->id;
+    public function index(Request $request)
+    {
+        $perPage = $request->input('perPage', 5); 
+        $users = User::paginate($perPage);
 
+        return $users;
+    }
+
+    public function getUserById(Request $request)
+    {
+        $id = $request->id;
         $user = User::findOrFail($id);
         return $user;
     }
-
- 
-  
 }

@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import { useState } from "react";
 import axios from "./api/axios";
 import Cookies from 'js-cookie';
+import 'mdb-react-ui-kit/dist/css/mdb.min.css';
+import "@fortawesome/fontawesome-free/css/all.min.css";
 
 export default function Home() {
   const [userName, setUserName] = useState();
