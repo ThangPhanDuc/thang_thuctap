@@ -15,12 +15,10 @@ class Message implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
- 
-
     /**
-     * Create a new event instance.
+     * Get the channels the event should broadcast on.
      *
-     * @return void
+     * @return \Illuminate\Broadcasting\Channel|array
      */
 
     public $sender_id;
@@ -34,23 +32,17 @@ class Message implements ShouldBroadcast
         $this->content = $content;
     }
 
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
-     */
     public function broadcastOn()
     {
-        // return new PrivateChannel('channel-name');
-
-        return new PrivateChannel('chat.' . $this->recipient_id);
-
-        // return ['chat.'];
+        // return new PrivateChannel('chat.' . $this->recipient_id);
+        return [
+            'chat.'.$this->sender_id,
+            'chat.'.$this->recipient_id,
+        ];
     }
 
     public function broadcastAs()
     {
-
         return 'message';
     }
 }

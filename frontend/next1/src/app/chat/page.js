@@ -45,28 +45,25 @@ export default function Chat() {
             cluster: 'ap1'
         });
 
-        var channel = pusher.subscribe('chat.' + recipient.id);
+        var channel = pusher.subscribe('chat.' + user.id);
 
         channel.bind('message', function (data) {
             allMessages.push(data);
+            // setMessages([...messages, ...allMessages]);
             setMessages(allMessages);
-            alert("get");
         });
-
-    }, [recipient.id]);
+    }, []);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         const token = localStorage.getItem('token');
         try {
             await axios.post("/message", {
-                "sender_id": user.id,
                 "recipient_id": recipient.id,
                 "content": message
             }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
-
                 },
             });
             setMessage('');
@@ -93,6 +90,31 @@ export default function Chat() {
         }
     };
 
+    const getMessagesRecipient = async (recipient) => {
+        setMessages([]);
+        setRecipient(recipient);
+
+        const token = localStorage.getItem('token');
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        };
+        try {
+            const response = await axios.get('/getMessage', {
+                params: {
+                    recipient_id: recipient.id
+                },
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            // setMessages(response.data);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
 
     return (
         <section style={{ backgroundColor: "#eee" }}>
@@ -107,7 +129,7 @@ export default function Chat() {
                                 <ul className="list-unstyled mb-0">
                                     {users.filter((user1) => user1.id !== user.id).map((user, index) => {
                                         return (
-                                            <li onClick={() => setRecipient(user)} className="p-2 border-bottom">
+                                            <li onClick={() => getMessagesRecipient(user)} className="p-2 border-bottom">
                                                 <a href="#!" className="d-flex justify-content-between">
                                                     <div className="d-flex flex-row">
                                                         <img
@@ -230,7 +252,9 @@ export default function Chat() {
                                                     <div className="card-header d-flex justify-content-between p-3">
                                                         <p className="fw-bold mb-0">{user.name}</p>
                                                         <p className="text-muted small mb-0">
-                                                            <i className="far fa-clock" /> 13 mins ago
+                                                            <i className="far fa-clock" />
+                                                            {message.created_at}
+                                                            {/* 13 mins ago */}
                                                         </p>
                                                     </div>
                                                     <div className="card-body">
@@ -247,20 +271,21 @@ export default function Chat() {
                                                 />
                                             </li>
                                         )
-                                    } else {
+                                    } else  {
                                         return (
                                             <li className="d-flex justify-content-between mb-4">
                                                 <img
-                                                    src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp"
+                                                    src={"http://localhost:8000/" + recipient.img}
                                                     alt="avatar"
                                                     className="rounded-circle d-flex align-self-start me-3 shadow-1-strong"
                                                     width={60}
                                                 />
                                                 <div className="card w-100">
                                                     <div className="card-header d-flex justify-content-between p-3">
-                                                        <p className="fw-bold mb-0">{message.recipient_id}</p>
+                                                        <p className="fw-bold mb-0">{recipient.name}</p>
                                                         <p className="text-muted small mb-0">
-                                                            <i className="far fa-clock" /> 12 mins ago
+                                                            <i className="far fa-clock" />
+                                                            {message.created_at}
                                                         </p>
                                                     </div>
                                                     <div className="card-body">

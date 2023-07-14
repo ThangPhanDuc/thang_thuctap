@@ -20,3 +20,9 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 // Broadcast::channel('chat.{recipient_id}', function ($user, $recipient_id) {
 //     return $user->id === (int) $recipient_id;
 // });
+
+
+Broadcast::channel('chat.{recipient_id}', function ($user, $recipient_id) {
+    // Lets say true for the time
+    return true;
+});
