@@ -51,7 +51,7 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
-        $perPage = $request->input('perPage', 5); 
+        $perPage = $request->input('perPage', 7); 
         $users = User::paginate($perPage);
 
         return $users;

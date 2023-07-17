@@ -6,11 +6,11 @@ use App\Events\Message;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Chat;
-
+use App\Models\User;
 
 class ChatController extends Controller
 {
-    public function message(Request $request)
+    public function sentMessage(Request $request)
     {
         $user = Auth::user();
 
@@ -20,11 +20,11 @@ class ChatController extends Controller
             $request->input('content')
         ));
 
-        $chat = new Chat();
-        $chat->sender_id = $user->id;
-        $chat->recipient_id = $request->input('recipient_id');
-        $chat->content = $request->input('content');
-        $chat->save();
+        // $chat = new Chat();
+        // $chat->sender_id = $user->id;
+        // $chat->recipient_id = $request->input('recipient_id');
+        // $chat->content = $request->input('content');
+        // $chat->save();
 
         return response()->json(['status' => 'success']);
     }
@@ -50,17 +50,9 @@ class ChatController extends Controller
     public function getLastMessage(Request $request)
     {
         $user = Auth::user();
+        $recipient_id = $request->input('recipient_id');
 
-        $chats = Chat::whereIn('id', function ($query) use ($user) {
-            $query->selectRaw('MAX(id)')
-                ->from('chats')
-                ->where('sender_id', $user->id)
-                ->orWhere('recipient_id', $user->id)
-                ->groupBy('sender_id', 'recipient_id');
-        })
-        ->orderBy('created_at', 'desc')
-        ->get();
-    
+        $chats = User::all();
         return $chats;
     }
 }

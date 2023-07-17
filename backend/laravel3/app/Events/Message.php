@@ -34,10 +34,10 @@ class Message implements ShouldBroadcast
 
     public function broadcastOn()
     {
-        // return new PrivateChannel('chat.' . $this->recipient_id);
+
         return [
-            'chat.'.$this->sender_id,
-            'chat.'.$this->recipient_id,
+            new Channel('chat.' . $this->recipient_id),
+            new Channel('chat.' . $this->sender_id),
         ];
     }
 

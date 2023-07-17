@@ -1,6 +1,6 @@
 "use client";
 
-import axios from "../api/axios";
+import axios from "../../api/axios";
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from "react";
 import 'bootstrap/dist/css/bootstrap.css';
@@ -10,14 +10,45 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import Pusher from "pusher-js";
 
 
-export default function Chat() {
+export default function Chat({ params }) {
+    const { id } = params;
+
     const [user, setUser] = useState({});
     const [message, setMessage] = useState('');
-    const [messages, setMessages] = useState([]);
+    const [messages, setMessages] = useState([{}]);
     const [users, setUsers] = useState([]);
     const [recipient, setRecipient] = useState({})
 
-    var allMessages = [];
+    useEffect(() => {
+        Pusher.logToConsole = true;
+
+        var pusher = new Pusher('0699e48d294babf98468', {
+            cluster: 'ap1'
+        });
+
+        var channel = pusher.subscribe('chat.' + user.id);
+
+        channel.bind('message', function (data) {
+
+            //xu ly thoi gian nhan tin nhan
+            var currentDate = new Date();
+
+            var day = String(currentDate.getDate()).padStart(2, '0');
+            var month = String(currentDate.getMonth() + 1).padStart(2, '0');
+            var year = String(currentDate.getFullYear());
+
+            var hours = String(currentDate.getHours()).padStart(2, '0');
+            var minutes = String(currentDate.getMinutes()).padStart(2, '0');
+            var seconds = String(currentDate.getSeconds()).padStart(2, '0');
+
+            var formattedDate = day + '/' + month + '/' + year + ' ' + hours + ':' + minutes + ':' + seconds;
+
+            data.created_at = formattedDate;
+            //
+            setMessages(prevMessages => [...prevMessages, data]);
+        });
+
+    }, [user.id]);
 
     useEffect(() => {
         getUser();
@@ -38,27 +69,14 @@ export default function Chat() {
         }
     };
 
-    useEffect(() => {
-        Pusher.logToConsole = true;
 
-        var pusher = new Pusher('0699e48d294babf98468', {
-            cluster: 'ap1'
-        });
-
-        var channel = pusher.subscribe('chat.' + user.id);
-
-        channel.bind('message', function (data) {
-            allMessages.push(data);
-            // setMessages([...messages, ...allMessages]);
-            setMessages(allMessages);
-        });
-    }, []);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+
         const token = localStorage.getItem('token');
         try {
-            await axios.post("/message", {
+            await axios.post("/sentMessage", {
                 "recipient_id": recipient.id,
                 "content": message
             }, {
@@ -74,7 +92,9 @@ export default function Chat() {
 
     useEffect(() => {
         getAllUser();
+        // setRecipient(user[0]);
     }, []);
+
     const getAllUser = async () => {
         const token = localStorage.getItem('token');
         const config = {
@@ -85,13 +105,16 @@ export default function Chat() {
         try {
             const response = await axios.get(`/getAllUser`, config);
             setUsers(response.data);
+
+
         } catch (error) {
             console.error(error);
         }
+
     };
 
     const getMessagesRecipient = async (recipient) => {
-        setMessages([]);
+
         setRecipient(recipient);
 
         const token = localStorage.getItem('token');
@@ -109,7 +132,7 @@ export default function Chat() {
                     Authorization: `Bearer ${token}`
                 }
             });
-            // setMessages(response.data);
+            setMessages(response.data);
         } catch (error) {
             console.error(error);
         }
@@ -129,7 +152,10 @@ export default function Chat() {
                                 <ul className="list-unstyled mb-0">
                                     {users.filter((user1) => user1.id !== user.id).map((user, index) => {
                                         return (
-                                            <li onClick={() => getMessagesRecipient(user)} className="p-2 border-bottom">
+                                            <li onClick={() => getMessagesRecipient(user)}
+                                                //  className="p-2 border-bottom "
+                                                className={`p-2 border-bottom ${recipient.id == user.id ? 'bg-success text-dark bg-opacity-10' : ''}`}
+                                            >
                                                 <a href="#!" className="d-flex justify-content-between">
                                                     <div className="d-flex flex-row">
                                                         <img
@@ -151,7 +177,7 @@ export default function Chat() {
                                         );
                                     })}
 
-                                    <li
+                                    {/* <li
                                         className="p-2 border-bottom"
                                         style={{ backgroundColor: "#eee" }}
                                     >
@@ -173,7 +199,7 @@ export default function Chat() {
                                                 <span className="badge bg-danger float-end">1</span>
                                             </div>
                                         </a>
-                                    </li>
+                                    </li> */}
 
 
                                 </ul>
@@ -187,7 +213,7 @@ export default function Chat() {
                             <div className="flex-shrink-0">
                                 <img
                                     src={"http://localhost:8000/" + recipient.img}
-                                    alt="Generic placeholder image"
+                                    alt=""
                                     className="img-fluid rounded-circle border border-dark border-3"
                                     style={{ width: 70 }}
                                 />
@@ -224,13 +250,19 @@ export default function Chat() {
                                     >
                                         + Follow
                                     </button>
-                                    <button
-                                        type="button"
-                                        className="btn btn-outline-dark btn-rounded btn-sm"
-                                        data-mdb-ripple-color="dark"
+                                    <Link
+                                        href={"/listUser/informationOfOtherUsers/" + recipient.id}
                                     >
-                                        See profile
-                                    </button>
+                                        <button
+                                            type="button"
+                                            className="btn btn-outline-dark btn-rounded btn-sm"
+                                            data-mdb-ripple-color="dark"
+                                        >
+
+                                            See profile
+                                        </button>
+                                    </Link>
+
                                     <button
                                         type="button"
                                         className="btn btn-outline-dark btn-floating btn-sm"
@@ -245,7 +277,7 @@ export default function Chat() {
                         <ul className="list-unstyled">
                             {
                                 messages.map((message, index) => {
-                                    if (message.sender_id == user.id) {
+                                    if (message.sender_id == user.id && message.recipient_id == recipient.id) {
                                         return (
                                             <li key={index} className="d-flex justify-content-between mb-4">
                                                 <div className="card w-100">
@@ -271,7 +303,7 @@ export default function Chat() {
                                                 />
                                             </li>
                                         )
-                                    } else  {
+                                    } else if (message.sender_id == recipient.id) {
                                         return (
                                             <li className="d-flex justify-content-between mb-4">
                                                 <img

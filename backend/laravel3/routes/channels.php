@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Broadcast;
-
+use Laravel\Sanctum\Sanctum;
 /*
 |--------------------------------------------------------------------------
 | Broadcast Channels
@@ -13,16 +13,13 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 
-Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
-    return (int) $user->id === (int) $id;
-});
-
-// Broadcast::channel('chat.{recipient_id}', function ($user, $recipient_id) {
-//     return $user->id === (int) $recipient_id;
+// Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
+//     return (int) $user->id === (int) $id;
 // });
 
-
-Broadcast::channel('chat.{recipient_id}', function ($user, $recipient_id) {
-    // Lets say true for the time
-    return true;
+Broadcast::channel('message.{recipient_id}', function ($user, $recipientId) {
+    // Kiểm tra xác thực người dùng và xác định liệu người dùng có quyền nghe kênh riêng tư hay không
+    // Ví dụ: Kiểm tra xem $user có phải là người nhận tin nhắn với $recipientId không
+    // Sanctum::actingAs($user);
+    return $user->id === $recipientId;
 });

@@ -37,4 +37,11 @@ class Chat extends Model
         $vietnamDateTime = $dateTime->addHours(0)->setTimezone('Asia/Ho_Chi_Minh');
         return $vietnamDateTime->format('d/m/Y H:i:s');
     }
+
+    public function getUpdatedAtAttribute($value)
+    {
+        $dateTime = Carbon::parse($value);
+        $vietnamDateTime = $dateTime->addHours(0)->setTimezone('Asia/Ho_Chi_Minh');
+        return $vietnamDateTime->format('d/m/Y H:i:s');
+    }
 }

@@ -43,7 +43,7 @@ export default function ListUser() {
             }
         };
         try {
-            const response = await axios.get(`/index?page=${currentPage }`, config);
+            const response = await axios.get(`/index?page=${currentPage}`, config);
             setUsers(response.data.data);
             setTotalPages(response.data.last_page)
         } catch (error) {
@@ -52,11 +52,11 @@ export default function ListUser() {
     };
 
     const handlePageChange = (page) => {
-        if(page>totalPages) return 0;
-        if(page>=1||page<=totalPages){
+        if (page > totalPages) return 0;
+        if (page >= 1 || page <= totalPages) {
             setCurrentPage(page);
         }
-        
+
     };
 
     useEffect(() => {
@@ -101,6 +101,7 @@ export default function ListUser() {
         }
     }
 
+    
 
 
     return (
@@ -120,7 +121,7 @@ export default function ListUser() {
                             className="img-fluid img-thumbnail mt-4 mb-2"
                             style={{ width: 150, zIndex: 1 }}
                         />
-                         <button
+                        <button
                             type="button"
                             className="btn btn-outline-dark"
                             data-mdb-ripple-color="dark"
@@ -129,7 +130,7 @@ export default function ListUser() {
                             <Link href="/user" >View profile</Link>
                         </button>
                     </div>
-                   
+
                     <div className="ms-3" style={{ marginTop: 130 }}>
                         <h5>{user.name}</h5>
                         <p>{user.email}</p>
@@ -139,7 +140,7 @@ export default function ListUser() {
                     className="p-4 text-black"
                     style={{ backgroundColor: "#f8f9fa" }}
                 >
-                   
+
                     <div className="d-flex justify-content-end text-center py-1">
                         <div>
                             <p className="mb-1 h5">250</p>
@@ -157,7 +158,7 @@ export default function ListUser() {
                 </div>
             </div>
 
-            <h1>List user</h1>
+            <h1 >List user</h1>
 
             <div className="row">
                 {users.filter((user1) => user1.id !== user.id).map((user, index) => {
@@ -176,8 +177,7 @@ export default function ListUser() {
                     }
 
                     return (
-                        <div key={index} className="col-xl-6 mb-4">
-
+                        <div key={index} className="col-xl-4 mb-4">
                             <div className="card">
                                 <div className="card-body">
                                     <div className="d-flex justify-content-between align-items-center">
@@ -203,15 +203,15 @@ export default function ListUser() {
                                     </div>
                                 </div>
                                 <div className="card-footer border-0 bg-light p-2 d-flex justify-content-around">
-                                    <a
+                                    <Link
                                         className="btn btn-link m-0 text-reset"
-                                        href="#"
+                                        href={"chat/"+user.id}
                                         role="button"
                                         data-ripple-color="primary"
                                     >
                                         Message
                                         <i className="fas fa-envelope ms-2" />
-                                    </a>
+                                    </Link>
                                     <a
                                         className="btn btn-link m-0 text-reset"
                                         href="#"
@@ -232,7 +232,7 @@ export default function ListUser() {
                 <ul className="pagination justify-content-center mt-4 mb-5">
                     <li className="page-item ">
                         <button
-                            onClick={() => handlePageChange(currentPage-1)}
+                            onClick={() => handlePageChange(currentPage - 1)}
                             className="page-link">Previous</button>
                     </li>
                     {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
@@ -247,7 +247,7 @@ export default function ListUser() {
 
                     <li className="page-item">
                         <button
-                            onClick={() => handlePageChange(currentPage+1)}
+                            onClick={() => handlePageChange(currentPage + 1)}
                             className="page-link" >
                             Next
                         </button>
