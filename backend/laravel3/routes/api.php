@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FriendController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\PostController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,8 +18,6 @@ use App\Http\Controllers\ChatController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
-
 
 Route::post('/register', [AuthController::class, 'register']);
 
@@ -46,4 +45,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/getMessage', [ChatController::class, 'getMessage']);
 
     Route::get('/getLastMessage', [ChatController::class, 'getLastMessage']);
+
+    // post
+    Route::post('/createPost', [PostController::class, 'createPost']);
+
+    Route::get('/getAllPost', [PostController::class, 'getAllPost']);
+
+    Route::post('/likePost', [PostController::class, 'likePost']);
+
+    Route::post('/commentPost', [PostController::class, 'commentPost']);
 });

@@ -20,11 +20,11 @@ class ChatController extends Controller
             $request->input('content')
         ));
 
-        // $chat = new Chat();
-        // $chat->sender_id = $user->id;
-        // $chat->recipient_id = $request->input('recipient_id');
-        // $chat->content = $request->input('content');
-        // $chat->save();
+        $chat = new Chat();
+        $chat->sender_id = $user->id;
+        $chat->recipient_id = $request->input('recipient_id');
+        $chat->content = $request->input('content');
+        $chat->save();
 
         return response()->json(['status' => 'success']);
     }
@@ -47,12 +47,12 @@ class ChatController extends Controller
         return $chats;
     }
 
-    public function getLastMessage(Request $request)
-    {
-        $user = Auth::user();
-        $recipient_id = $request->input('recipient_id');
+    // public function getLastMessage(Request $request)
+    // {
+    //     $user = Auth::user();
+    //     $recipient_id = $request->input('recipient_id');
 
-        $chats = User::all();
-        return $chats;
-    }
+    //     $chats = User::all();
+    //     return $chats;
+    // }
 }
