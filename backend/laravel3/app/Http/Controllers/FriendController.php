@@ -19,7 +19,7 @@ class FriendController extends Controller
         return $friendStatus;
     }
 
-   
+
 
     public function updateStatusFriend(Request $request)
     {
@@ -63,5 +63,17 @@ class FriendController extends Controller
             default:
                 return "Invalid status";
         }
+    }
+
+    public function getFriendList(Request $request)
+    {
+        $user = $request->user();
+
+        $friends = Friend::where('user_id', $user->id)
+            ->where('status', 'accepted')
+            ->with('friend.lastMessage')
+            ->get();
+
+        return response()->json(['friends' => $friends]);
     }
 }

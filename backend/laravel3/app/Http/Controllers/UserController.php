@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use app\Models\User;
+use App\Models\Photo;
 
 class UserController extends Controller
 {
@@ -62,5 +63,14 @@ class UserController extends Controller
         $id = $request->id;
         $user = User::findOrFail($id);
         return $user;
+    }
+
+    public function getLatestPhotos(Request $request){
+        $user= Auth::user();
+        $latestPhotos = Photo::whereHas('post', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })->latest('created_at')->take(10)->get();
+    
+        return response()->json(['photos' => $latestPhotos], 200);
     }
 }

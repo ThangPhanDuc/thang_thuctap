@@ -28,4 +28,16 @@ class Friend extends Model
     {
         return $this->belongsTo(User::class, 'friend_id');
     }
+
+    public function lastMessage()
+    {
+        return $this->hasOne(Chat::class, 'sender_id', 'user_id')
+            ->where('recipient_id', $this->friend_id)
+            ->orWhere(function ($query) {
+                $query->where('sender_id', $this->friend_id)
+                    ->where('recipient_id', $this->user_id);
+            })
+            ->latest()
+            ->withDefault();
+    }
 }

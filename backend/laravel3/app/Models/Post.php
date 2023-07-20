@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Post extends Model
 {
@@ -36,5 +37,24 @@ class Post extends Model
     public function likesCount()
     {
         return $this->likes()->count();
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class, 'post_id');
+    }
+
+    public function getCreatedAtAttribute($value)
+    {
+        $dateTime = Carbon::parse($value);
+        $vietnamDateTime = $dateTime->addHours(0)->setTimezone('Asia/Ho_Chi_Minh');
+        return $vietnamDateTime->format('H:i:s d/m/Y');
+    }
+
+    public function getUpdatedAtAttribute($value)
+    {
+        $dateTime = Carbon::parse($value);
+        $vietnamDateTime = $dateTime->addHours(0)->setTimezone('Asia/Ho_Chi_Minh');
+        return $vietnamDateTime->format('H:i:s d/m/Y');
     }
 }

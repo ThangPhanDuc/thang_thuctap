@@ -138,7 +138,9 @@ export default function Chat({ params }) {
         }
     }
 
-
+    const addEmoji = emoji => {
+        setMessage(prevMessage => prevMessage + emoji);
+    };
     return (
         <section style={{ backgroundColor: "#eee" }}>
             <div className="container py-5">
@@ -344,6 +346,11 @@ export default function Chat({ params }) {
                                         <label className="form-label" htmlFor="textAreaExample2">
                                             Message
                                         </label>
+                                        <div>
+                                            <button type="button" onClick={() => addEmoji("😊")}>
+                                                😊
+                                            </button>
+                                        </div>
                                     </div>
                                 </li>
                                 <button type="submit" className="btn btn-info btn-rounded float-end">

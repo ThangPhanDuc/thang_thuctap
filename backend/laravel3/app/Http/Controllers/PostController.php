@@ -9,6 +9,8 @@ use App\Models\Photo;
 use App\Models\Like;
 use App\Models\Comment;
 use Illuminate\Support\Facades\File;
+use App\Events\CommentPost;
+use App\Models\Friend;
 
 class PostController extends Controller
 {
@@ -23,38 +25,82 @@ class PostController extends Controller
         $post->content = $content;
         $post->save();
 
-        // $images = $request->file('images');
+        $images = $request->file('images');
 
-        // foreach ($images as $image) {
-        //     $imageName = time() . '_' . $image->getClientOriginalName();
-        //     $image->move(public_path('Post_Images'), $imageName);
-        // }
-
-        $image = $request->file('images');
-        $imageName = time() . '_' . $image->getClientOriginalName();
-        $image->move(public_path('Post_Images'), $imageName);
+        $imageName = time() . '_' . $images->getClientOriginalName();
+        $images->move(public_path('Post_Images'), $imageName);
 
         $photo = new Photo();
         $photo->post_id = $post->id;
-        $photo->path  = 'Post_Images/' . $imageName;
+        $photo->path = 'Post_Images/' . $imageName;
         $photo->save();
-
 
         return response()->json(['status' => 'create post successfully']);
     }
 
     public function getAllPost(Request $request)
     {
-        $posts = Post::with('user', 'photos')
-            ->withCount('likes')
-            ->get();
+        $user = Auth::user();
+        $user_id = $user->id;
+
+        $friendIds1 = Friend::where(function ($query) use ($user_id) {
+            $query->where('user_id', $user_id);
+        })
+            ->where('status', 'accepted')
+            ->pluck('friend_id')
+            ->toArray();
+
+        $friendIds2 = Friend::where(function ($query) use ($user_id) {
+            $query->where('friend_id', $user_id);
+        })
+            ->where('status', 'accepted')
+            ->pluck('user_id')
+            ->toArray();
+
+        $friendIds = array_merge($friendIds1, $friendIds2);
+        array_push($friendIds, $user_id);
+
+        $posts = Post::whereIn('user_id', $friendIds)
+        ->with('user', 'photos', 'comments.user')
+        ->withCount('likes')
+        ->orderBy('created_at', 'desc')
+        ->get();
+        foreach ($posts as $post) {
+            $post->liked_by_user = $post->likes()->where('user_id', $user->id)->exists();
+        }
         return $posts;
+    }
+
+    public function getPostById(Request $request)
+    {
+        $user = Auth::user();
+        $post_id = $request->id;
+        $post = Post::with('user', 'photos', 'comments.user')
+            ->withCount('likes')
+            ->find($post_id);
+
+        if (!$post) {
+            return response()->json(['message' => 'The post does not exist'], 404);
+        }
+
+        $post->liked_by_user = $post->likes()->where('user_id', $user->id)->exists();
+
+        return response()->json($post);
     }
 
     public function likePost(Request $request)
     {
         $user  = Auth::user();
         $post_id = $request->post_id;
+
+        $existingLike = Like::where('user_id', $user->id)
+            ->where('post_id', $post_id)
+            ->first();
+
+        if ($existingLike) {
+            $existingLike->delete();
+            return response()->json(['status' => 'You have unliked this post']);
+        }
 
         $like = new Like();
         $like->user_id = $user->id;
@@ -69,6 +115,16 @@ class PostController extends Controller
         $user  = Auth::user();
         $post_id = $request->post_id;
         $content = $request->content;
+        $post = Post::where("id", $post_id)->first();
+
+        if ($post->user_id != $user->id) {
+            event(new CommentPost(
+                $post->user_id,
+                $user,
+                $post_id,
+                $content,
+            ));
+        }
 
         $comment = new Comment();
         $comment->user_id = $user->id;

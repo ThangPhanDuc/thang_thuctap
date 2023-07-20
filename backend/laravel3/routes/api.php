@@ -38,6 +38,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::post('/updateStatusFriend', [FriendController::class, 'updateStatusFriend']);
 
+    Route::get('/getFriendList', [FriendController::class, 'getFriendList']);
+
     Route::get('/index', [UserController::class, 'index']);
 
     Route::post('/sentMessage', [ChatController::class, 'sentMessage']);
@@ -50,6 +52,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/createPost', [PostController::class, 'createPost']);
 
     Route::get('/getAllPost', [PostController::class, 'getAllPost']);
+
+    Route::get('/getPostById/{id}', [PostController::class, 'getPostById']);
 
     Route::post('/likePost', [PostController::class, 'likePost']);
 

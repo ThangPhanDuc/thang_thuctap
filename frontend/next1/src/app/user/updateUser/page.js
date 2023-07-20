@@ -57,14 +57,12 @@ function UpdateUser() {
           "Content-Type": "multipart/form-data",
         },
       });
-
       console.log("User updated successfully");
     } catch (error) {
       console.error(error);
     }
     router.push("/user");
   }
-
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
@@ -76,13 +74,6 @@ function UpdateUser() {
       setSelectedImageUrl("");
     }
   }
-
-  // const [profile, setProfile] = useState();
-  // function updateProfile() {
-  //   console.log(editorRef.current.getContent());
-  //   setProfile(editorRef.current.getContent());
-  // }
-
 
   return (
     <section style={{ backgroundColor: "#eee" }}>
@@ -109,7 +100,6 @@ function UpdateUser() {
           </div>
         </div>
         <form onSubmit={handleUpdate} >
-
           <div className="row">
             <div className="col-lg-4">
               <div className="card mb-4">
@@ -144,53 +134,8 @@ function UpdateUser() {
                 <Editor
                   onInit={(evt, editor) => editorRef.current = editor}
                   initialValue={user.profile}
-                  
                 />
                 <button type="submit" class="btn btn-primary w-25 mx-auto mb-2">Update</button>
-
-                {/* <div className="card-body">
-                  <div className="row">
-                    <div className="col-sm-3">
-                      <p className="mb-0">Full Name</p>
-                    </div>
-                    <input
-                      value={user.name}
-                      onChange={(event) => setUser({ ...user, name: event.target.value })}
-                      name="name" class="form-control col-sm-9 w-75 " placeholder=""
-                    />
-                  </div>
-                  <hr />
-                  <div className="row">
-                    <div className="col-sm-3">
-                      <p className="mb-0">Age</p>
-                    </div>
-                    <input
-                      value={user.age}
-                      onChange={(event) => setUser({ ...user, age: event.target.value })}
-                      type="number" class="form-control col-sm-9 w-75" placeholder="" />
-                  </div>
-                  <hr />
-                  <div className="row">
-                    <div className="col-sm-3">
-                      <p className="mb-0">Phone</p>
-                    </div>
-                    <input
-                      value={user.phone}
-                      onChange={(event) => setUser({ ...user, phone: event.target.value })}
-                      type="text" class="form-control col-sm-9 w-75" placeholder="" />
-                  </div>
-                  <hr />
-                  <div className="row">
-                    <div className="col-sm-3">
-                      <p className="mb-0">Address</p>
-                    </div>
-                    <input
-                      value={user.address}
-                      onChange={(event) => setUser({ ...user, address: event.target.value })}
-                      type="text" class="form-control col-sm-9 w-75" placeholder="" />
-                  </div>
-                </div>
-                <button type="submit" class="btn btn-primary w-25 mx-auto mb-2">Update</button> */}
               </div>
             </div>
           </div>

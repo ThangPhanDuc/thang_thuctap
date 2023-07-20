@@ -8,13 +8,23 @@ import 'bootstrap/dist/css/bootstrap.css';
 import Link from 'next/link'
 import 'mdb-react-ui-kit/dist/css/mdb.min.css';
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import Pusher from "pusher-js";
+import Header from "@/components/Header";
 
 export default function Home() {
     const [user, setUser] = useState({});
+    const [posts, setPosts] = useState([]);
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [comment, setComment] = useState("");
+    const [contentPost, setContentPost] = useState("");
+    const [friends, setFriends] = useState([]);
+    const emojis = ["😊", "😂", "😍", "👍", "❤️"];
+    const [showEmojis, setShowEmojis] = useState(false);
+
 
     useEffect(() => {
         getUser();
+        getAllPost();
+        getFriendList();
     }, []);
     const getUser = async () => {
         const token = localStorage.getItem('token');
@@ -32,519 +42,407 @@ export default function Home() {
         }
     };
 
+    const getAllPost = async () => {
+        const token = localStorage.getItem('token');
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        };
+        try {
+            const response = await axios.get('/getAllPost', config);
+            setPosts(response.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const getFriendList = async () => {
+        const token = localStorage.getItem('token');
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        };
+        try {
+            const response = await axios.get('/getFriendList', config);
+            setFriends(response.data.friends);
+            console.log(response.data.friends);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+
+    const handSubmitPost = async (event) => {
+        event.preventDefault();
+        const token = localStorage.getItem('token');
+
+        const formData = new FormData();
+        formData.append("images", selectedImage);
+        formData.append("content", contentPost)
+
+        try {
+            await axios.post("/createPost", formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+            setContentPost("");
+            setSelectedImage(null);
+            getAllPost();
+
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    const handleLikePost = async (post_id) => {
+        const token = localStorage.getItem('token');
+        try {
+            await axios.post('/likePost', {
+                "post_id": post_id,
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            getAllPost();
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const handCommentPost = async (post_id) => {
+        const token = localStorage.getItem('token');
+        try {
+            await axios.post('/commentPost', {
+                post_id: post_id,
+                "content": comment
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            getAllPost();
+            setComment("");
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
 
     return (
         <>
-            {/* <link
-                href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
-                rel="stylesheet"
-                integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
-                crossOrigin="anonymous"
-            /> */}
-            {/* <nav className="navbar navbar-light bg-white">
-                <a href="#" className="navbar-brand">
-                    BootdEy.com
-                </a>
-                <form className="form-inline">
-                    <div className="input-group">
-                        <input
-                            type="text"
-                            className="form-control"
-                            aria-label="Recipient's username"
-                            aria-describedby="button-addon2"
-                        />
-                        <div className="input-group-append">
-                            <button
-                                className="btn btn-outline-primary"
-                                type="button"
-                                id="button-addon2"
-                            >
-                                <i className="fa fa-search" />
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </nav> */}
+            <Header />
             <div className="container gedf-wrapper">
                 <div className="row">
                     <div className="col-md-3">
                         <div className="card">
                             <div className="card-body">
-                                <div className="h5">@LeeCross</div>
-                                <div className="h7 text-muted">Fullname : Miracles Lee Cross</div>
+
+                                <img
+                                    alt="image"
+                                    src={"http://localhost:8000/" + user.img}
+                                />
+                                <div className="h5">{user.name}</div>
+                                <div className="h7 text-muted">Email : {user.email}</div>
                                 <div className="h7">
-                                    Developer of web applications, JavaScript, PHP, Java, Python,
-                                    Ruby, Java, Node.js, etc.
+                                    {user.profile}
                                 </div>
                             </div>
                             <ul className="list-group list-group-flush">
                                 <li className="list-group-item">
                                     <div className="h6 text-muted">Followers</div>
-                                    <div className="h5">5.2342</div>
+                                    <div className="h5">4</div>
                                 </li>
                                 <li className="list-group-item">
                                     <div className="h6 text-muted">Following</div>
-                                    <div className="h5">6758</div>
+                                    <div className="h5">3</div>
                                 </li>
                                 <li className="list-group-item">Vestibulum at eros</li>
                             </ul>
                         </div>
                     </div>
-                    <div className="col-md-6 gedf-main ">
-                        {/*- \\\\\\\Post*/}
-                        <div className="card gedf-card">
-                            <div className="card-header">
-                                <ul
-                                    className="nav nav-tabs card-header-tabs"
-                                    id="myTab"
-                                    role="tablist"
-                                >
-                                    <li className="nav-item">
-                                        <a
-                                            className="nav-link active"
-                                            id="posts-tab"
-                                            data-toggle="tab"
-                                            href="#posts"
-                                            role="tab"
-                                            aria-controls="posts"
-                                            aria-selected="true"
+                    <div className="col-md-6 gedf-main " >
+                        <form onSubmit={handSubmitPost}>
+                            <div className="card gedf-card">
+                                <div className="card-header">
+                                    <ul className="nav nav-tabs card-header-tabs" id="myTab" role="tablist">
+                                        <li className="nav-item">
+                                            <a
+                                                className="nav-link active"
+                                                id="posts-tab"
+                                                data-toggle="tab"
+                                                href="#posts"
+                                                role="tab"
+                                                aria-controls="posts"
+                                                aria-selected="true"
+                                            >
+                                                Make a publication
+                                            </a>
+                                        </li>
+                                        <li className="nav-item">
+                                            <a
+                                                className="nav-link"
+                                                id="images-tab"
+                                                data-toggle="tab"
+                                                role="tab"
+                                                aria-controls="images"
+                                                aria-selected="false"
+                                                href="#images"
+                                            >
+                                                Images
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div className="card-body">
+                                    <div className="tab-content" id="myTabContent">
+                                        <div
+                                            className="tab-pane fade show active"
+                                            id="posts"
+                                            role="tabpanel"
+                                            aria-labelledby="posts-tab"
                                         >
-                                            Make a publication
-                                        </a>
-                                    </li>
-                                    <li className="nav-item">
-                                        <a
-                                            className="nav-link"
-                                            id="images-tab"
-                                            data-toggle="tab"
-                                            role="tab"
-                                            aria-controls="images"
-                                            aria-selected="false"
-                                            href="#images"
-                                        >
-                                            Images
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div className="card-body">
-                                <div className="tab-content" id="myTabContent">
-                                    <div
-                                        className="tab-pane fade show active"
-                                        id="posts"
-                                        role="tabpanel"
-                                        aria-labelledby="posts-tab"
-                                    >
-                                        <div className="form-group">
-                                            <label className="sr-only" htmlFor="message">
-                                                post
-                                            </label>
-                                            <textarea
-                                                className="form-control"
-                                                id="message"
-                                                rows={3}
-                                                placeholder="What are you thinking?"
-                                                defaultValue={""}
-                                            />
-                                        </div>
-                                    </div>
-                                    <div
-                                        className="tab-pane fade"
-                                        id="images"
-                                        role="tabpanel"
-                                        aria-labelledby="images-tab"
-                                    >
-                                        <div className="form-group">
-                                            <div className="custom-file">
-                                                <input
-                                                    type="file"
-                                                    className="custom-file-input"
-                                                    id="customFile"
-                                                />
-                                                <label className="custom-file-label" htmlFor="customFile">
-                                                    Upload image
+                                            <div className="form-group">
+                                                <label className="sr-only" htmlFor="message">
+                                                    post
                                                 </label>
+                                                <textarea
+                                                    onChange={e => setContentPost(e.target.value)}
+                                                    className="form-control"
+                                                    id="message"
+                                                    rows={3}
+                                                    placeholder="What are you thinking?"
+                                                    value={contentPost}
+                                                />
+                                                <div className="emoji-icon" onClick={() => setShowEmojis(!showEmojis)}>
+                                                    😊
+                                                </div>
+                                                {showEmojis && (
+                                                    <div className="emoji-list">
+                                                        {emojis.map(emoji => (
+                                                            <button
+                                                                key={emoji}
+                                                                type="button"
+                                                                onClick={() => setContentPost(prevContentPost => prevContentPost + emoji)}
+                                                            >
+                                                                {emoji}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
-                                        <div className="py-4" />
-                                    </div>
-                                </div>
-                                <div className="btn-toolbar justify-content-between">
-                                    <div className="btn-group">
-                                        <button type="submit" className="btn btn-primary">
-                                            share
-                                        </button>
-                                    </div>
-                                    <div className="btn-group">
-                                        <button
-                                            id="btnGroupDrop1"
-                                            type="button"
-                                            className="btn btn-link dropdown-toggle"
-                                            data-toggle="dropdown"
-                                            aria-haspopup="true"
-                                            aria-expanded="false"
-                                        >
-                                            <i className="fa fa-globe" />
-                                        </button>
                                         <div
-                                            className="dropdown-menu dropdown-menu-right"
-                                            aria-labelledby="btnGroupDrop1"
+                                            className="tab-pane fade"
+                                            id="images"
+                                            role="tabpanel"
+                                            aria-labelledby="images-tab"
                                         >
-                                            <a className="dropdown-item" href="#">
-                                                <i className="fa fa-globe" /> Public
-                                            </a>
-                                            <a className="dropdown-item" href="#">
-                                                <i className="fa fa-users" /> Friends
-                                            </a>
-                                            <a className="dropdown-item" href="#">
-                                                <i className="fa fa-user" /> Just me
-                                            </a>
+                                            <div className="form-group">
+                                                <div className="custom-file">
+                                                    <input type="file" className="custom-file-input" id="customFile" />
+                                                    <label className="custom-file-label" htmlFor="customFile">
+                                                        Upload image
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div className="py-4" />
+                                        </div>
+                                    </div>
+                                    {selectedImage &&
+                                        <div className="d-flex align-items-center">
+                                            <img
+                                                src={URL.createObjectURL(selectedImage)}
+                                                alt="avatar"
+                                                className="img-fluid m-3"
+                                                style={{ width: 150 }}
+                                            />
+                                            <button onClick={() => setSelectedImage()}>X</button>
+                                        </div>
+                                    }
+                                    <input
+                                        class="form-control" type="file" id="formFile" multiple
+                                        onChange={(event) => {
+                                            console.log(event.target.files);
+                                            setSelectedImage(event.target.files[0]);
+                                        }}
+                                    ></input>
+                                    <div className="btn-toolbar justify-content-between">
+                                        <div className="btn-group">
+                                            <button type="submit" className="btn btn-primary">
+                                                share
+                                            </button>
+                                        </div>
+                                        <div className="btn-group">
+                                            <button
+                                                id="btnGroupDrop1"
+                                                type="submit"
+                                                className="btn btn-link dropdown-toggle"
+                                                data-toggle="dropdown"
+                                                aria-haspopup="true"
+                                                aria-expanded="false"
+                                            >
+                                                <i className="fa fa-globe" />
+                                            </button>
+                                            <div
+                                                className="dropdown-menu dropdown-menu-right"
+                                                aria-labelledby="btnGroupDrop1"
+                                            >
+                                                <a className="dropdown-item" href="#">
+                                                    <i className="fa fa-globe" /> Public
+                                                </a>
+                                                <a className="dropdown-item" href="#">
+                                                    <i className="fa fa-users" /> Friends
+                                                </a>
+                                                <a className="dropdown-item" href="#">
+                                                    <i className="fa fa-user" /> Just me
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </form>
 
-                        <div className="social-feed-box">
-                            {/* <div className="pull-right social-action dropdown">
-                                <button data-toggle="dropdown" className="dropdown-toggle btn-white">
-                                    <i className="fa fa-angle-down" />
-                                </button>
-                                <ul className="dropdown-menu m-t-xs">
-                                    <li>
-                                        <a href="#">Config</a>
-                                    </li>
-                                </ul>
-                            </div> */}
-                            <div className="social-avatar">
-                                <a href="" className="pull-left">
-                                    <img
-                                        alt="image"
-                                        src="https://bootdey.com/img/Content/avatar/avatar1.png"
-                                    />
-                                </a>
-                                <div className="media-body">
-                                    <a href="#">Andrew Williams</a>
-                                    <small className="text-muted">Today 4:21 pm - 12.06.2014</small>
-                                </div>
-                            </div>
-                            <div className="social-body">
-                                <p>
-                                    Many desktop publishing packages and web page editors now use Lorem
-                                    Ipsum as their default model text, and a search for 'lorem ipsum'
-                                    will uncover many web sites still in their infancy. Packages and web
-                                    page editors now use Lorem Ipsum as their default model text.
-                                </p>
-                                <div className="btn-group">
-                                    <button className="btn btn-white btn-xs">
-                                        <i className="fa fa-thumbs-up" /> Like this!
-                                    </button>
-                                    <button className="btn btn-white btn-xs">
-                                        <i className="fa fa-comments" /> Comment
-                                    </button>
-                                    <button className="btn btn-white btn-xs">
-                                        <i className="fa fa-share" /> Share
-                                    </button>
-                                </div>
-                            </div>
-                            <div className="social-footer">
-                                <div className="social-comment">
-                                    <a href="" className="pull-left">
-                                        <img
-                                            alt="image"
-                                            src="https://bootdey.com/img/Content/avatar/avatar1.png"
-                                        />
-                                    </a>
-                                    <div className="media-body">
-                                        <a href="#">Andrew Williams</a>
-                                        Internet tend to repeat predefined chunks as necessary, making
-                                        this the first true generator on the Internet. It uses a
-                                        dictionary of over 200 Latin words.
-                                        <br />
-                                        <a href="#" className="small">
-                                            <i className="fa fa-thumbs-up" /> 26 Like this!
-                                        </a>{" "}
-                                        -<small className="text-muted">12.06.2014</small>
+                        {posts.map((post, index) => {
+                            let show = false;
+                            return (
+                                <div className="social-feed-box">
+                                    <div className="social-avatar">
+                                        <a href="" className="pull-left">
+                                            <img
+                                                alt="image"
+                                                src={"http://localhost:8000/" + post.user.img}
+                                            />
+                                        </a>
+                                        <div className="media-body">
+                                            <a href="#">{post.user.name}</a>
+                                            <small className="text-muted">{post.created_at}</small>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="social-comment">
-                                    <a href="" className="pull-left">
-                                        <img
-                                            alt="image"
-                                            src="https://bootdey.com/img/Content/avatar/avatar1.png"
-                                        />
-                                    </a>
-                                    <div className="media-body">
-                                        <a href="#">Andrew Williams</a>
-                                        Making this the first true generator on the Internet. It uses a
-                                        dictionary of.
-                                        <br />
-                                        <a href="#" className="small">
-                                            <i className="fa fa-thumbs-up" /> 11 Like this!
-                                        </a>{" "}
-                                        -<small className="text-muted">10.07.2014</small>
-                                    </div>
-                                </div>
-                                <div className="social-comment">
-                                    <a href="" className="pull-left">
-                                        <img
-                                            alt="image"
-                                            src="https://bootdey.com/img/Content/avatar/avatar1.png"
-                                        />
-                                    </a>
-                                    <div className="media-body">
-                                        <textarea
-                                            className="form-control"
-                                            placeholder="Write comment..."
-                                            defaultValue={""}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="social-feed-box">
-                            {/* <div className="pull-right social-action dropdown">
-                                <button data-toggle="dropdown" className="dropdown-toggle btn-white">
-                                    <i className="fa fa-angle-down" />
-                                </button>
-                                <ul className="dropdown-menu m-t-xs">
-                                    <li>
-                                        <a href="#">Config</a>
-                                    </li>
-                                </ul>
-                            </div> */}
-                            <div className="social-avatar">
-                                <a href="" className="pull-left">
-                                    <img
-                                        alt="image"
-                                        src="https://bootdey.com/img/Content/avatar/avatar1.png"
-                                    />
-                                </a>
-                                <div className="media-body">
-                                    <a href="#">Andrew Williams</a>
-                                    <small className="text-muted">Today 4:21 pm - 12.06.2014</small>
-                                </div>
-                            </div>
-                            <div className="social-body">
-                                <p>
-                                    Many desktop publishing packages and web page editors now use Lorem
-                                    Ipsum as their default model text, and a search for 'lorem ipsum'
-                                    will uncover many web sites still in their infancy. Packages and web
-                                    page editors now use Lorem Ipsum as their default model text.
-                                </p>
-                                <p>
-                                    Lorem Ipsum as their default model text, and a search for 'lorem
-                                    ipsum' will uncover many web sites still in their infancy. Packages
-                                    and web page editors now use Lorem Ipsum as their default model
-                                    text.
-                                </p>
-                                <img
-                                    src="https://www.bootdey.com/image/650x280/FFB6C1/000000"
-                                    className="img-responsive"
-                                />
-                                <div className="btn-group">
-                                    <button className="btn btn-white btn-xs">
-                                        <i className="fa fa-thumbs-up" /> Like this!
-                                    </button>
-                                    <button className="btn btn-white btn-xs">
-                                        <i className="fa fa-comments" /> Comment
-                                    </button>
-                                    <button className="btn btn-white btn-xs">
-                                        <i className="fa fa-share" /> Share
-                                    </button>
-                                </div>
-                            </div>
-                            <div className="social-footer">
-                                <div className="social-comment">
-                                    <a href="" className="pull-left">
-                                        <img
-                                            alt="image"
-                                            src="https://bootdey.com/img/Content/avatar/avatar1.png"
-                                        />
-                                    </a>
-                                    <div className="media-body">
-                                        <a href="#">Andrew Williams</a>
-                                        Internet tend to repeat predefined chunks as necessary, making
-                                        this the first true generator on the Internet. It uses a
-                                        dictionary of over 200 Latin words.
-                                        <br />
-                                        <a href="#" className="small">
-                                            <i className="fa fa-thumbs-up" /> 26 Like this!
-                                        </a>{" "}
-                                        -<small className="text-muted">12.06.2014</small>
-                                    </div>
-                                </div>
-                                <div className="social-comment">
-                                    <a href="" className="pull-left">
-                                        <img
-                                            alt="image"
-                                            src="https://bootdey.com/img/Content/avatar/avatar1.png"
-                                        />
-                                    </a>
-                                    <div className="media-body">
-                                        <a href="#">Andrew Williams</a>
-                                        Making this the first true generator on the Internet. It uses a
-                                        dictionary of.
-                                        <br />
-                                        <a href="#" className="small">
-                                            <i className="fa fa-thumbs-up" /> 11 Like this!
-                                        </a>{" "}
-                                        -<small className="text-muted">10.07.2014</small>
-                                    </div>
-                                </div>
-                                <div className="social-comment">
-                                    <a href="" className="pull-left">
-                                        <img
-                                            alt="image"
-                                            src="https://bootdey.com/img/Content/avatar/avatar1.png"
-                                        />
-                                    </a>
-                                    <div className="media-body">
-                                        <a href="#">Andrew Williams</a>
-                                        Making this the first true generator on the Internet. It uses a
-                                        dictionary of.
-                                        <br />
-                                        <a href="#" className="small">
-                                            <i className="fa fa-thumbs-up" /> 11 Like this!
-                                        </a>{" "}
-                                        -<small className="text-muted">10.07.2014</small>
-                                    </div>
-                                </div>
-                                <div className="social-comment">
-                                    <a href="" className="pull-left">
-                                        <img
-                                            alt="image"
-                                            src="https://bootdey.com/img/Content/avatar/avatar1.png"
-                                        />
-                                    </a>
-                                    <div className="media-body">
-                                        <textarea
-                                            className="form-control"
-                                            placeholder="Write comment..."
-                                            defaultValue={""}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="social-feed-box">
-                            {/* <div className="pull-right social-action dropdown">
-                                <button data-toggle="dropdown" className="dropdown-toggle btn-white">
-                                    <i className="fa fa-angle-down" />
-                                </button>
-                                <ul className="dropdown-menu m-t-xs">
-                                    <li>
-                                        <a href="#">Config</a>
-                                    </li>
-                                </ul>
-                            </div> */}
-                            <div className="social-avatar">
-                                <a href="" className="pull-left">
-                                    <img
-                                        alt="image"
-                                        src="https://bootdey.com/img/Content/avatar/avatar1.png"
-                                    />
-                                </a>
-                                <div className="media-body">
-                                    <a href="#">Andrew Williams</a>
-                                    <small className="text-muted">Today 4:21 pm - 12.06.2014</small>
-                                </div>
-                            </div>
-                            <div className="social-body">
-                                <p>
-                                    Packages and web page editors now use Lorem Ipsum as their default
-                                    model text. Page editors now use Lorem Ipsum as their default model
-                                    text.
-                                </p>
-                                <div className="btn-group">
-                                    <button className="btn btn-white btn-xs">
-                                        <i className="fa fa-thumbs-up" /> Like this!
-                                    </button>
-                                    <button className="btn btn-white btn-xs">
-                                        <i className="fa fa-comments" /> Comment
-                                    </button>
-                                    <button className="btn btn-white btn-xs">
-                                        <i className="fa fa-share" /> Share
-                                    </button>
-                                </div>
-                            </div>
-                            <div className="social-footer">
-                                <div className="social-comment">
-                                    <a href="" className="pull-left">
-                                        <img
-                                            alt="image"
-                                            src="https://bootdey.com/img/Content/avatar/avatar1.png"
-                                        />
-                                    </a>
-                                    <div className="media-body">
-                                        <a href="#">Andrew Williams</a>
-                                        Making this the first true generator on the Internet. It uses a
-                                        dictionary of.
-                                        <br />
-                                        <a href="#" className="small">
-                                            <i className="fa fa-thumbs-up" /> 11 Like this!
-                                        </a>{" "}
-                                        -<small className="text-muted">10.07.2014</small>
-                                    </div>
-                                </div>
-                                <div className="social-comment">
-                                    <a href="" className="pull-left">
-                                        <img
-                                            alt="image"
-                                            src="https://bootdey.com/img/Content/avatar/avatar1.png"
-                                        />
-                                    </a>
-                                    <div className="media-body">
-                                        <textarea
-                                            className="form-control"
-                                            placeholder="Write comment..."
-                                            defaultValue={""}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                                    <div className="social-body">
 
+                                        <div dangerouslySetInnerHTML={{ __html: post.content }} >
+                                        </div>
+                                        {post.photos.map((photo, index) => {
+                                            return (
+                                                <img
+                                                    src={"http://localhost:8000/" + photo.path}
+                                                    className="img-responsive"
+                                                />
+                                            )
+                                        })}
+
+                                        <div className="btn-group">
+                                            <button className="btn btn-white btn-xs"
+                                                onClick={() => handleLikePost(post.id)}>
+                                                <i className="fa fa-thumbs-up" />
+                                                {post.liked_by_user ? `You and ${post.likes_count - 1} others` : `${post.likes_count} like`}
+
+                                            </button>
+                                            <button className="btn btn-white btn-xs">
+                                                <i className="fa fa-comments" /> {post.comments.length}  Comment
+                                            </button>
+                                            <button className="btn btn-white btn-xs">
+                                                <i className="fa fa-share" /> Share
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div className="social-footer">
+                                        {post.comments.map((comment, index) => {
+
+                                            return (
+                                                <div key={index} className="social-comment" >
+                                                    <a href="" className="pull-left">
+                                                        <img
+                                                            alt="image"
+                                                            src={"http://localhost:8000/" + comment.user.img}
+                                                        />
+                                                    </a>
+                                                    <div className="media-body">
+                                                        <a href="#">{comment.user.name}</a>
+                                                        {comment.content}
+                                                        <br />
+                                                        <a href="#" className="small">
+                                                            <i className="fa fa-thumbs-up" /> 26 Like this!
+                                                        </a>{" "}
+                                                        -<small className="text-muted">{comment.created_at}</small>
+                                                    </div>
+                                                </div>
+                                            )
+                                        })}
+                                        <div className="social-comment ">
+                                            <a href="" className="pull-left">
+                                                <img
+                                                    alt="image"
+                                                    src={"http://localhost:8000/" + user.img}
+                                                />
+                                            </a>
+                                            <div className="media-body">
+                                                <textarea
+                                                    onChange={e => setComment(e.target.value)}
+                                                    className="form-control w-100"
+                                                    placeholder="Write comment..."
+
+                                                />
+                                                <div className="emoji-icon" onClick={function(){
+                                                    show=true;
+                                                }}>
+                                                    😊
+                                                </div>
+                                                {show && (
+                                                    <div className="emoji-list">
+                                                        {emojis.map(emoji => (
+                                                            <button
+                                                                key={emoji}
+                                                                type="button"
+                                                                onClick={() => setComment(prevContentPost => prevContentPost + emoji)}
+                                                            >
+                                                                {emoji}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <button onClick={() => handCommentPost(post.id)} >sent</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            )
+                        })}
                     </div>
                     <div className="col-md-3">
-                        <div className="card gedf-card">
-                            <div className="card-body">
-                                <h5 className="card-title">Card title</h5>
-                                <h6 className="card-subtitle mb-2 text-muted">Card subtitle</h6>
-                                <p className="card-text">
-                                    Some quick example text to build on the card title and make up the
-                                    bulk of the card's content.
-                                </p>
-                                <a href="#" className="card-link">
-                                    Card link
-                                </a>
-                                <a href="#" className="card-link">
-                                    Another link
-                                </a>
-                            </div>
-                        </div>
-                        <div className="card gedf-card">
-                            <div className="card-body">
-                                <h5 className="card-title">Card title</h5>
-                                <h6 className="card-subtitle mb-2 text-muted">Card subtitle</h6>
-                                <p className="card-text">
-                                    Some quick example text to build on the card title and make up the
-                                    bulk of the card's content.
-                                </p>
-                                <a href="#" className="card-link">
-                                    Card link
-                                </a>
-                                <a href="#" className="card-link">
-                                    Another link
-                                </a>
+                        <div className="push-down" />
+                        <div className="card card-transparent">
+                            <h5 className="card-heading">Friends</h5>
+                            <div className="mda-list">
+                                {friends.map((item, index) => {
+                                    return (
+                                        <div className="mda-list-item">
+                                            <img
+                                                src={"http://localhost:8000/" + item.friend.img}
+                                                alt="List user"
+                                                className="mda-list-item-img thumb48"
+                                            />
+                                            <div className="mda-list-item-text mda-2-line">
+                                                <h3>
+                                                    <a href="#">{item.friend.name}</a>
+                                                </h3>
+                                                <div className="text-muted text-ellipsis">Ut ac nisi id mauris</div>
+                                            </div>
+                                        </div>
+                                    )
+                                })}
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </>
-
-
-
     )
 }
