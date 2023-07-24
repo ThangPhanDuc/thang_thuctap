@@ -67,10 +67,6 @@ class UserController extends Controller
 
     public function getLatestPhotos(Request $request){
         $user= Auth::user();
-        $latestPhotos = Photo::whereHas('post', function ($query) use ($user) {
-            $query->where('user_id', $user->id);
-        })->latest('created_at')->take(10)->get();
-    
-        return response()->json(['photos' => $latestPhotos], 200);
     }
+    
 }

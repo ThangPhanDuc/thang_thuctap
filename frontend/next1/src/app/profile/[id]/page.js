@@ -22,7 +22,7 @@ export default function Profile() {
   useEffect(() => {
     getUser();
     getAllPost();
-    getFriendList();
+    // getFriendList();
   }, []);
   const getUser = async () => {
     const token = localStorage.getItem('token');
@@ -55,21 +55,21 @@ export default function Profile() {
     }
   };
 
-  const getFriendList = async () => {
-    const token = localStorage.getItem('token');
-    const config = {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    };
-    try {
-      const response = await axios.get('/getFriendList', config);
-      setFriends(response.data.friends);
-      console.log(response.data.friends);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  // const getFriendList = async () => {
+  //   const token = localStorage.getItem('token');
+  //   const config = {
+  //     headers: {
+  //       Authorization: `Bearer ${token}`
+  //     }
+  //   };
+  //   try {
+  //     const response = await axios.get('/getFriendList', config);
+  //     setFriends(response.data.friends);
+  //     console.log(response.data.friends);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   const getUpdatedPost = () => {
     getAllPost();
@@ -338,32 +338,31 @@ export default function Profile() {
                     </div>
                   </div>
                   <p>
-                    Hi! I'm Amiah the Senior UI Designer at Vibrant. We hope you enjoy
-                    the design and quality of Social.
+                    {user.profile}
                   </p>
                   <div className="mt-3">
                     <label className="tx-11 font-weight-bold mb-0 text-uppercase">
                       Joined:
                     </label>
-                    <p className="text-muted">November 15, 2015</p>
+                    <p className="text-muted">{user.create_at}</p>
                   </div>
                   <div className="mt-3">
                     <label className="tx-11 font-weight-bold mb-0 text-uppercase">
                       Lives:
                     </label>
-                    <p className="text-muted">New York, USA</p>
+                    <p className="text-muted">{user.address}</p>
                   </div>
                   <div className="mt-3">
                     <label className="tx-11 font-weight-bold mb-0 text-uppercase">
                       Email:
                     </label>
-                    <p className="text-muted">me@nobleui.com</p>
+                    <p className="text-muted">{user.email}</p>
                   </div>
                   <div className="mt-3">
                     <label className="tx-11 font-weight-bold mb-0 text-uppercase">
-                      Website:
+                      Phone:
                     </label>
-                    <p className="text-muted">www.nobleui.com</p>
+                    <p className="text-muted">{user.phone}</p>
                   </div>
                   <div className="mt-3 d-flex social-links">
                     <a
@@ -448,7 +447,7 @@ export default function Profile() {
                     <PostCard key={index}
                       post={post}
                       user={user}
-                      getUpdatedPost={getUpdatedPost()} />
+                       getUpdatedPost={getUpdatedPost()} />
                   )
                 })}
 

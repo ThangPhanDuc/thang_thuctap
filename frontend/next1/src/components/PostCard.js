@@ -48,7 +48,7 @@ export default function PostCard(props) {
 
     return (
         <div className="container ">
-            <div className="col-md-6 mx-auto  mt-4 w-100">
+            <div className="col-md-6 mx-auto  mt-4">
                 <div className="social-feed-box">
                     <div className="social-avatar">
                         <a href="" className="pull-left">

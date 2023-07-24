@@ -20,11 +20,11 @@ class ChatController extends Controller
             $request->input('content')
         ));
 
-        $chat = new Chat();
-        $chat->sender_id = $user->id;
-        $chat->recipient_id = $request->input('recipient_id');
-        $chat->content = $request->input('content');
-        $chat->save();
+        // $chat = new Chat();
+        // $chat->sender_id = $user->id;
+        // $chat->recipient_id = $request->input('recipient_id');
+        // $chat->content = $request->input('content');
+        // $chat->save();
 
         return response()->json(['status' => 'success']);
     }

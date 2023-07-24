@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\FriendController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\SearchController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,13 +35,18 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('/getUserById/{id}', [UserController::class, 'getUserById']);
 
+    Route::get('/index', [UserController::class, 'index']);
+
+    //friend
+
     Route::get('/getFriendStatusByUserId/{id}', [FriendController::class, 'getFriendStatusByUserId']);
 
     Route::post('/updateStatusFriend', [FriendController::class, 'updateStatusFriend']);
 
     Route::get('/getFriendList', [FriendController::class, 'getFriendList']);
 
-    Route::get('/index', [UserController::class, 'index']);
+    Route::get('/getFriendSuggestions', [FriendController::class, 'getFriendSuggestions']);
+    //message
 
     Route::post('/sentMessage', [ChatController::class, 'sentMessage']);
 
@@ -51,11 +57,18 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // post
     Route::post('/createPost', [PostController::class, 'createPost']);
 
-    Route::get('/getAllPost', [PostController::class, 'getAllPost']);
+    Route::get('/getAllPost', [PostController::class, 'getFriendPosts']);
 
     Route::get('/getPostById/{id}', [PostController::class, 'getPostById']);
+
+    
 
     Route::post('/likePost', [PostController::class, 'likePost']);
 
     Route::post('/commentPost', [PostController::class, 'commentPost']);
+
+    //search
+
+    Route::get('/getPostByKeyword', [SearchController::class, 'getPostByKeyword']);
+
 });

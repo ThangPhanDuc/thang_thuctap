@@ -8,9 +8,11 @@ use App\Models\Post;
 use App\Models\Photo;
 use App\Models\Like;
 use App\Models\Comment;
+use App\Models\User;
 use Illuminate\Support\Facades\File;
 use App\Events\CommentPost;
 use App\Models\Friend;
+use Illuminate\Pagination\Paginator;
 
 class PostController extends Controller
 {
@@ -38,46 +40,49 @@ class PostController extends Controller
         return response()->json(['status' => 'create post successfully']);
     }
 
-    public function getAllPost(Request $request)
+    // public function getAllPost(Request $request)
+    // {
+    //     $user = Auth::user();
+    //     $user_id = $user->id;
+
+    //     $friendIds = Friend::selectRaw('CASE 
+    //                 WHEN user_id = ? THEN friend_id 
+    //                 WHEN friend_id = ? THEN user_id 
+    //                 END as friend_id', [$user_id, $user_id])
+    //         ->where('status', 'accepted')
+    //         ->pluck('friend_id')
+    //         ->filter() 
+    //         ->toArray();
+
+    //     array_push($friendIds, $user_id);
+
+    //     $posts = Post::whereIn('user_id', $friendIds)
+    //         ->with('user', 'photos', 'comments.user')
+    //         ->withCount('likes')
+    //         ->orderBy('created_at', 'desc')
+    //         ->paginate(2);
+    //     foreach ($posts as $post) {
+    //         $post->liked_by_user = $post->likes()->where('user_id', $user->id)->exists();
+    //     }
+    //     return $posts;
+    // }
+
+    public function getFriendPosts(Request $request)
     {
         $user = Auth::user();
-        $user_id = $user->id;
+        $friendsPosts = $user->friendPosts()->paginate(10);
 
-        $friendIds1 = Friend::where(function ($query) use ($user_id) {
-            $query->where('user_id', $user_id);
-        })
-            ->where('status', 'accepted')
-            ->pluck('friend_id')
-            ->toArray();
-
-        $friendIds2 = Friend::where(function ($query) use ($user_id) {
-            $query->where('friend_id', $user_id);
-        })
-            ->where('status', 'accepted')
-            ->pluck('user_id')
-            ->toArray();
-
-        $friendIds = array_merge($friendIds1, $friendIds2);
-        array_push($friendIds, $user_id);
-
-        $posts = Post::whereIn('user_id', $friendIds)
-        ->with('user', 'photos', 'comments.user')
-        ->withCount('likes')
-        ->orderBy('created_at', 'desc')
-        ->get();
-        foreach ($posts as $post) {
-            $post->liked_by_user = $post->likes()->where('user_id', $user->id)->exists();
-        }
-        return $posts;
+        return $friendsPosts;
     }
 
     public function getPostById(Request $request)
     {
         $user = Auth::user();
         $post_id = $request->id;
-        $post = Post::with('user', 'photos', 'comments.user')
+        $post = Post::where('id', $post_id)
+            ->with('user', 'photos', 'comments.user')
             ->withCount('likes')
-            ->find($post_id);
+            ->first();
 
         if (!$post) {
             return response()->json(['message' => 'The post does not exist'], 404);
@@ -87,6 +92,8 @@ class PostController extends Controller
 
         return response()->json($post);
     }
+
+
 
     public function likePost(Request $request)
     {

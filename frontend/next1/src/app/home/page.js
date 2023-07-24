@@ -19,11 +19,35 @@ export default function Home() {
     const [friends, setFriends] = useState([]);
     const emojis = ["😊", "😂", "😍", "👍", "❤️"];
     const [showEmojis, setShowEmojis] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [searchKeyword, setSearchKeyword] = useState("");
+
+
+    useEffect(() => {
+        getAllPost();
+    }, [currentPage]);
+
+    const getAllPost = async () => {
+        const token = localStorage.getItem('token');
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        };
+        try {
+            const response = await axios.get(`/getAllPost?page=${currentPage}`, config);
+            setPosts(response.data.data);
+
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
 
 
     useEffect(() => {
         getUser();
-        getAllPost();
+
         getFriendList();
     }, []);
     const getUser = async () => {
@@ -42,21 +66,6 @@ export default function Home() {
         }
     };
 
-    const getAllPost = async () => {
-        const token = localStorage.getItem('token');
-        const config = {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        };
-        try {
-            const response = await axios.get('/getAllPost', config);
-            setPosts(response.data);
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
     const getFriendList = async () => {
         const token = localStorage.getItem('token');
         const config = {
@@ -66,8 +75,8 @@ export default function Home() {
         };
         try {
             const response = await axios.get('/getFriendList', config);
-            setFriends(response.data.friends);
-            console.log(response.data.friends);
+            setFriends(response.data);
+            console.log(response.data);
         } catch (error) {
             console.error(error);
         }
@@ -390,8 +399,8 @@ export default function Home() {
                                                     placeholder="Write comment..."
 
                                                 />
-                                                <div className="emoji-icon" onClick={function(){
-                                                    show=true;
+                                                <div className="emoji-icon" onClick={function () {
+                                                    show = true;
                                                 }}>
                                                     😊
                                                 </div>
@@ -421,17 +430,17 @@ export default function Home() {
                         <div className="card card-transparent">
                             <h5 className="card-heading">Friends</h5>
                             <div className="mda-list">
-                                {friends.map((item, index) => {
+                                {friends.map((friend, index) => {
                                     return (
                                         <div className="mda-list-item">
                                             <img
-                                                src={"http://localhost:8000/" + item.friend.img}
+                                                src={"http://localhost:8000/" + friend.img}
                                                 alt="List user"
                                                 className="mda-list-item-img thumb48"
                                             />
                                             <div className="mda-list-item-text mda-2-line">
                                                 <h3>
-                                                    <a href="#">{item.friend.name}</a>
+                                                    <a href="#">{friend.name}</a>
                                                 </h3>
                                                 <div className="text-muted text-ellipsis">Ut ac nisi id mauris</div>
                                             </div>

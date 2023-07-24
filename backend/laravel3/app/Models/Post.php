@@ -57,4 +57,6 @@ class Post extends Model
         $vietnamDateTime = $dateTime->addHours(0)->setTimezone('Asia/Ho_Chi_Minh');
         return $vietnamDateTime->format('H:i:s d/m/Y');
     }
+
+   
 }

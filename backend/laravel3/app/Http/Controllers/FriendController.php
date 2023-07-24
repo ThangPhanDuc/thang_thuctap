@@ -68,12 +68,68 @@ class FriendController extends Controller
     public function getFriendList(Request $request)
     {
         $user = $request->user();
+        $user_id = $user->id;
 
-        $friends = Friend::where('user_id', $user->id)
+        $friendIds1 = Friend::where(function ($query) use ($user_id) {
+            $query->where('user_id', $user_id);
+        })
             ->where('status', 'accepted')
-            ->with('friend.lastMessage')
+            ->pluck('friend_id')
+            ->toArray();
+
+        $friendIds2 = Friend::where(function ($query) use ($user_id) {
+            $query->where('friend_id', $user_id);
+        })
+            ->where('status', 'accepted')
+            ->pluck('user_id')
+            ->toArray();
+
+        $friendIds = array_merge($friendIds1, $friendIds2);
+
+        $friends = User::whereIn('id', $friendIds)
+
             ->get();
 
-        return response()->json(['friends' => $friends]);
+        return $friends;
+    }
+
+    public function getFriendSuggestions(Request $request)
+    {
+        $user = $request->user();
+        $user_id = $user->id;
+
+        $friendIds = $this->getFriendListByUserId($user_id);
+
+        $friendSuggestions = User::whereNotIn('id', $friendIds)->get();
+        foreach($friendSuggestions as $friendSuggestion){
+            $friendIdsSuggestion = $this->getFriendListByUserId($friendSuggestion->id);
+            $MutualFriendsId = array_intersect($friendIdsSuggestion,$friendIds);
+            
+            $friendSuggestion->MutualFriends = count($MutualFriendsId);
+        }
+
+        return $friendSuggestion;
+    }
+
+    function getFriendListByUserId($user_id)
+    {
+
+        $friendIds1 = Friend::where(function ($query) use ($user_id) {
+            $query->where('user_id', $user_id);
+        })
+            ->where('status', 'accepted')
+            ->pluck('friend_id')
+            ->toArray();
+
+        $friendIds2 = Friend::where(function ($query) use ($user_id) {
+            $query->where('friend_id', $user_id);
+        })
+            ->where('status', 'accepted')
+            ->pluck('user_id')
+            ->toArray();
+
+        $friendIds = array_merge($friendIds1, $friendIds2);
+
+        return $friendIds;
     }
 }
