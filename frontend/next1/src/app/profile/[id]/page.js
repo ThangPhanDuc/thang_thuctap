@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import PostCard from "@/components/PostCard";
 
-import "../../../css/Profile.css"
+import "../../../styles/Profile.css"
 import 'bootstrap/dist/css/bootstrap.css';
 import 'mdb-react-ui-kit/dist/css/mdb.min.css';
 import "@fortawesome/fontawesome-free/css/all.min.css";

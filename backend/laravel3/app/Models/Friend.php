@@ -29,9 +29,6 @@ class Friend extends Model
         return $this->belongsTo(User::class, 'friend_id');
     }
 
-    public function friendPosts()
-    {
-        return $this->friend->posts;
-    }
+    
    
 }

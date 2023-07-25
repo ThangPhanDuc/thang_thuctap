@@ -10,6 +10,7 @@ import 'mdb-react-ui-kit/dist/css/mdb.min.css';
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import Header from "@/components/Header";
 
+
 export default function Home() {
     const [user, setUser] = useState({});
     const [posts, setPosts] = useState([]);
@@ -21,7 +22,7 @@ export default function Home() {
     const [showEmojis, setShowEmojis] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchKeyword, setSearchKeyword] = useState("");
-
+   
 
     useEffect(() => {
         getAllPost();
@@ -370,11 +371,11 @@ export default function Home() {
                                                     <a href="" className="pull-left">
                                                         <img
                                                             alt="image"
-                                                            src={"http://localhost:8000/" + comment.user.img}
+                                                            src={"http://localhost:8000/" + comment.user?.img}
                                                         />
                                                     </a>
                                                     <div className="media-body">
-                                                        <a href="#">{comment.user.name}</a>
+                                                        <a href="#">{comment.user?.name}</a>
                                                         {comment.content}
                                                         <br />
                                                         <a href="#" className="small">

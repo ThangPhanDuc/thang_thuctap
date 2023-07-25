@@ -3,16 +3,21 @@
 import { useState, useEffect } from "react";
 import axios from "../app/api/axios";
 import Pusher from "pusher-js";
-import Link from 'next/link'
-
+import { useRouter } from 'next/navigation';
+import { changeSearchKeyword } from "@/redux/features/searchSlice";
+import { setUser } from "@/redux/features/userSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 
 export default function Header(props) {
-    const [user, setUser] = useState({});
+    // const [user, setUser] = useState({});
     const [notifications, setNotifications] = useState([]);
     const [messages, setMessages] = useState([]);
     const [showNotification, setShowNotification] = useState(false);
     const [showMessages, setShowMessages] = useState(false);
     const [searchKeyword, setSearchKeyword] = useState("");
+    const dispatch = useAppDispatch();
+
+    const user = useAppSelector((state) => state.userReducer.value);
 
     useEffect(() => {
         Pusher.logToConsole = true;
@@ -24,12 +29,10 @@ export default function Header(props) {
         var channel = pusher.subscribe('comment.' + user.id);
         channel.bind('new-comment', function (data) {
             // alert(data.userComment.name + "commented on your post: " + data.content);
-            // setNotification(notification + 1);
             setNotifications(prevNotifications => [...prevNotifications, data]);
         });
 
         var channel = pusher.subscribe('chat.' + user.id);
-
         channel.bind('message', function (data) {
             setMessages(prevMessages => [...prevMessages, data]);
         });
@@ -49,21 +52,23 @@ export default function Header(props) {
         try {
             const response = await axios.get('/user', config);
             const userInfo = response.data;
-            setUser(userInfo);
+            // setUser(userInfo);
+            dispatch(setUser(userInfo))
         } catch (error) {
             console.error(error);
         }
     };
-
-    const handSearch = () => {
-
+    const router = useRouter();
+    const handSearch = (event) => {
+        event.preventDefault();
+        dispatch(changeSearchKeyword(searchKeyword))
+        router.push('/search');
 
     }
 
 
     return (
         <>
-            {/* Navbar*/}
             <nav className="navbar navbar-expand-lg navbar-light bg-light ">
                 <div className="container-fluid justify-content-between bg-primary">
                     {/* Left elements */}
@@ -83,7 +88,7 @@ export default function Header(props) {
                         </a>
                         {/* Search form */}
                         <form
-
+                            
                             className="input-group w-auto my-auto d-none d-sm-flex">
                             <input
                                 onChange={e => setSearchKeyword(e.target.value)}
@@ -95,11 +100,9 @@ export default function Header(props) {
                                 style={{ minWidth: 125 }}
                             />
 
-                            <span onClick={handSearch()} className="input-group-text border-0 d-none d-lg-flex">
+                            <span onClick={handSearch} className="input-group-text border-0 d-none d-lg-flex">
                                 <i className="fas fa-search" />
                             </span>
-
-
                         </form>
                     </div>
                     {/* Left elements */}

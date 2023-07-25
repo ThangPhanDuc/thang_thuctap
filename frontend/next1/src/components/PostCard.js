@@ -1,16 +1,18 @@
 "use client";
-import "../css/PostCard.css"
+import "../styles/PostCard.css"
 import { useState, useEffect } from "react";
 import Link from 'next/link'
 import axios from "../app/api/axios";
+import { useAppSelector } from "@/redux/hooks";
 
 export default function PostCard(props) {
-    const { user, post,getUpdatedPost } = props;
+    const { post } = props;
+    const user = useAppSelector((state) => state.userReducer.value);
     const [comment, setComment] = useState("");
     const emojis = ["😊", "😂", "😍", "👍", "❤️"];
     const [showEmojis, setShowEmojis] = useState(false);
 
-    const handCommentPost = async (post_id,event) => {
+    const handCommentPost = async (post_id, event) => {
         event.preventDefault();
         const token = localStorage.getItem('token');
         try {
@@ -23,7 +25,6 @@ export default function PostCard(props) {
                 },
             });
             setComment("");
-            getUpdatedPost();
         } catch (error) {
             console.log(error);
         }
@@ -39,7 +40,6 @@ export default function PostCard(props) {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            getUpdatedPost();
         } catch (error) {
             console.log(error);
         }
@@ -115,7 +115,7 @@ export default function PostCard(props) {
                                 </div>
                             )
                         })}
-                        <form onSubmit={() => handCommentPost(post.id,event)}>
+                        <form onSubmit={() => handCommentPost(post.id, event)}>
                             <div className="social-comment">
                                 <Link href="#" className="pull-left">
                                     <img

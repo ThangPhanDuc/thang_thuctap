@@ -39,7 +39,7 @@ class User extends Authenticatable
     {
         return $this->hasManyThrough(Post::class, Friend::class, 'user_id', 'user_id', 'id', 'friend_id')
             ->where('friends.status', 'accepted')
-            ->with('user', 'comments','photos')
+            ->with('user', 'comments.user','photos')
             ->withCount('likes')
             ->orderBy('posts.created_at', 'desc');
     }
