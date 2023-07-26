@@ -16,29 +16,35 @@ export default function Search() {
 
     useEffect(() => {
         getPostByKeyword();
-    }, []);
+    }, [searchKeyword]);
 
     const getPostByKeyword = async () => {
         const token = localStorage.getItem('token');
         const config = {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+          params: {
+            keyword: searchKeyword, 
+            page: 1 
+          }
         };
+      
         try {
-            const response = await axios.get(`/getPostByKeyword?page=${1}`, config);
-            setPosts(response.data.data);
-            console.log("post:"+ posts);
+          const response = await axios.get('/getPostByKeyword', config);
+          setPosts(response.data.data);
+          console.log("post:" + posts);
         } catch (error) {
-            console.error(error);
+          console.error(error);
         }
-    };
-
+      };
+      
     
 
     return (
         <>
             <Header />
+            <h1>{searchKeyword}</h1>
             <div className="container bootstrap snippets bootdeys bootdey">
                 <div className="row decor-default">
                     <div className="col-lg-3 col-md-4 col-sm-12">

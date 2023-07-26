@@ -52,7 +52,7 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
-        $perPage = $request->input('perPage', 7); 
+        $perPage = $request->input('perPage', 7);
         $users = User::paginate($perPage);
 
         return $users;
@@ -65,8 +65,11 @@ class UserController extends Controller
         return $user;
     }
 
-    public function getLatestPhotos(Request $request){
-        $user= Auth::user();
+    public function getPhotosByUserId(Request $request)
+    {   
+        $user = User::findOrFail($request->id);
+        $photos = $user->postPhotos()->paginate(10);
+
+        return response()->json($photos);
     }
-    
 }

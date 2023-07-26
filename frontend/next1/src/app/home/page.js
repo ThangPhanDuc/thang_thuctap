@@ -1,18 +1,19 @@
 "use client";
 
-import "../home.css"
+import "../../styles/Home.css"
 import axios from "../api/axios";
-import { useRouter } from 'next/navigation';
 import { useState, useEffect } from "react";
 import 'bootstrap/dist/css/bootstrap.css';
 import Link from 'next/link'
 import 'mdb-react-ui-kit/dist/css/mdb.min.css';
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import Header from "@/components/Header";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import PostCard from "@/components/PostCard";
 
 
 export default function Home() {
-    const [user, setUser] = useState({});
+    const user = useAppSelector((state) => state.userReducer.value);
     const [posts, setPosts] = useState([]);
     const [selectedImage, setSelectedImage] = useState(null);
     const [comment, setComment] = useState("");
@@ -21,7 +22,6 @@ export default function Home() {
     const emojis = ["😊", "😂", "😍", "👍", "❤️"];
     const [showEmojis, setShowEmojis] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-    const [searchKeyword, setSearchKeyword] = useState("");
    
 
     useEffect(() => {
@@ -44,28 +44,10 @@ export default function Home() {
         }
     };
 
-
-
     useEffect(() => {
-        getUser();
-
         getFriendList();
     }, []);
-    const getUser = async () => {
-        const token = localStorage.getItem('token');
-        const config = {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        };
-        try {
-            const response = await axios.get('/user', config);
-            const userInfo = response.data;
-            setUser(userInfo);
-        } catch (error) {
-            console.error(error);
-        }
-    };
+   
 
     const getFriendList = async () => {
         const token = localStorage.getItem('token');
@@ -322,107 +304,7 @@ export default function Home() {
                         {posts.map((post, index) => {
                             let show = false;
                             return (
-                                <div className="social-feed-box">
-                                    <div className="social-avatar">
-                                        <a href="" className="pull-left">
-                                            <img
-                                                alt="image"
-                                                src={"http://localhost:8000/" + post.user.img}
-                                            />
-                                        </a>
-                                        <div className="media-body">
-                                            <a href="#">{post.user.name}</a>
-                                            <small className="text-muted">{post.created_at}</small>
-                                        </div>
-                                    </div>
-                                    <div className="social-body">
-
-                                        <div dangerouslySetInnerHTML={{ __html: post.content }} >
-                                        </div>
-                                        {post.photos.map((photo, index) => {
-                                            return (
-                                                <img
-                                                    src={"http://localhost:8000/" + photo.path}
-                                                    className="img-responsive"
-                                                />
-                                            )
-                                        })}
-
-                                        <div className="btn-group">
-                                            <button className="btn btn-white btn-xs"
-                                                onClick={() => handleLikePost(post.id)}>
-                                                <i className="fa fa-thumbs-up" />
-                                                {post.liked_by_user ? `You and ${post.likes_count - 1} others` : `${post.likes_count} like`}
-
-                                            </button>
-                                            <button className="btn btn-white btn-xs">
-                                                <i className="fa fa-comments" /> {post.comments.length}  Comment
-                                            </button>
-                                            <button className="btn btn-white btn-xs">
-                                                <i className="fa fa-share" /> Share
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div className="social-footer">
-                                        {post.comments.map((comment, index) => {
-
-                                            return (
-                                                <div key={index} className="social-comment" >
-                                                    <a href="" className="pull-left">
-                                                        <img
-                                                            alt="image"
-                                                            src={"http://localhost:8000/" + comment.user?.img}
-                                                        />
-                                                    </a>
-                                                    <div className="media-body">
-                                                        <a href="#">{comment.user?.name}</a>
-                                                        {comment.content}
-                                                        <br />
-                                                        <a href="#" className="small">
-                                                            <i className="fa fa-thumbs-up" /> 26 Like this!
-                                                        </a>{" "}
-                                                        -<small className="text-muted">{comment.created_at}</small>
-                                                    </div>
-                                                </div>
-                                            )
-                                        })}
-                                        <div className="social-comment ">
-                                            <a href="" className="pull-left">
-                                                <img
-                                                    alt="image"
-                                                    src={"http://localhost:8000/" + user.img}
-                                                />
-                                            </a>
-                                            <div className="media-body">
-                                                <textarea
-                                                    onChange={e => setComment(e.target.value)}
-                                                    className="form-control w-100"
-                                                    placeholder="Write comment..."
-
-                                                />
-                                                <div className="emoji-icon" onClick={function () {
-                                                    show = true;
-                                                }}>
-                                                    😊
-                                                </div>
-                                                {show && (
-                                                    <div className="emoji-list">
-                                                        {emojis.map(emoji => (
-                                                            <button
-                                                                key={emoji}
-                                                                type="button"
-                                                                onClick={() => setComment(prevContentPost => prevContentPost + emoji)}
-                                                            >
-                                                                {emoji}
-                                                            </button>
-                                                        ))}
-                                                    </div>
-                                                )}
-                                            </div>
-                                            <button onClick={() => handCommentPost(post.id)} >sent</button>
-                                        </div>
-                                    </div>
-                                </div>
+                                <PostCard post ={post} />
                             )
                         })}
                     </div>

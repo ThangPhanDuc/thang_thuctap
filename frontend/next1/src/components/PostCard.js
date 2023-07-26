@@ -6,7 +6,9 @@ import axios from "../app/api/axios";
 import { useAppSelector } from "@/redux/hooks";
 
 export default function PostCard(props) {
-    const { post } = props;
+    const  postState  = props.post;
+    const [post,setPost]=useState(postState);
+
     const user = useAppSelector((state) => state.userReducer.value);
     const [comment, setComment] = useState("");
     const emojis = ["😊", "😂", "😍", "👍", "❤️"];
@@ -25,6 +27,7 @@ export default function PostCard(props) {
                 },
             });
             setComment("");
+            getPostById();
         } catch (error) {
             console.log(error);
         }
@@ -40,15 +43,32 @@ export default function PostCard(props) {
                     Authorization: `Bearer ${token}`,
                 },
             });
+            getPostById();
         } catch (error) {
             console.log(error);
         }
     }
 
+    
+    const getPostById = async () => {
+        const token = localStorage.getItem('token');
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        };
+        try {
+            const response = await axios.get(`/getPostById/${postState.id}`, config);
+            setPost(response.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
 
     return (
         <div className="container ">
-            <div className="col-md-6 mx-auto  mt-4">
+            <div className="col-md-12 mx-auto  mt-4">
                 <div className="social-feed-box">
                     <div className="social-avatar">
                         <a href="" className="pull-left">
@@ -151,7 +171,6 @@ export default function PostCard(props) {
                                 </div>
                             )}
                         </form>
-
                     </div>
                 </div>
             </div>

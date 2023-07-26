@@ -7,12 +7,13 @@ import { useRouter } from 'next/navigation';
 import { changeSearchKeyword } from "@/redux/features/searchSlice";
 import { setUser } from "@/redux/features/userSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import 'bootstrap/dist/css/bootstrap.css';
 
 export default function Header(props) {
-    // const [user, setUser] = useState({});
+
     const [notifications, setNotifications] = useState([]);
     const [messages, setMessages] = useState([]);
-    const [showNotification, setShowNotification] = useState(false);
+    const [showNotification, setShowNotification] = useState(true);
     const [showMessages, setShowMessages] = useState(false);
     const [searchKeyword, setSearchKeyword] = useState("");
     const dispatch = useAppDispatch();
@@ -63,14 +64,17 @@ export default function Header(props) {
         event.preventDefault();
         dispatch(changeSearchKeyword(searchKeyword))
         router.push('/search');
-
     }
 
 
     return (
         <>
-            <nav className="navbar navbar-expand-lg navbar-light bg-light ">
-                <div className="container-fluid justify-content-between bg-primary">
+            <nav className="navbar navbar-expand-lg navbar-light shadow p-3 mb-5 bg-white rounded"
+                style={{
+                    // position: 'fixed',
+                    top: 0, left: 0, width: '100%', zIndex: 100, height: '65px', justifyContent: 'center'
+                }}>
+                <div className="container-fluid justify-content-between ">
                     {/* Left elements */}
                     <div className="d-flex">
                         {/* Brand */}
@@ -83,12 +87,12 @@ export default function Header(props) {
                                 height={20}
                                 alt="MDB Logo"
                                 loading="lazy"
-                                style={{ marginTop: 2 }}
+                            // style={{ marginTop: 2 }}
                             />
                         </a>
                         {/* Search form */}
                         <form
-                            
+
                             className="input-group w-auto my-auto d-none d-sm-flex">
                             <input
                                 onChange={e => setSearchKeyword(e.target.value)}
@@ -103,6 +107,8 @@ export default function Header(props) {
                             <span onClick={handSearch} className="input-group-text border-0 d-none d-lg-flex">
                                 <i className="fas fa-search" />
                             </span>
+
+
                         </form>
                     </div>
                     {/* Left elements */}
@@ -221,8 +227,8 @@ export default function Header(props) {
                                     12
                                 </span>
                             </a>
-                            <ul
-                                className="dropdown-menu dropdown-menu-end"
+                            {/* {showNotification && <ul
+                                className="dropdown-menu-end"
                                 aria-labelledby="navbarDropdownMenuLink"
                             >
                                 <li>
@@ -240,7 +246,41 @@ export default function Header(props) {
                                         Something else here
                                     </a>
                                 </li>
-                            </ul>
+                            </ul>} */}
+                            {showNotification &&
+                                <ul className="list-group list-group-light"
+                                    style={{ position: 'absolute', marginTop: '25px', zIndex: 1, marginLeft: '-330px' }}
+                                >
+                                    {
+                                        notifications.map((notification, index) => {
+                                            return (
+                                                <li className="list-group-item d-flex justify-content-between align-items-center">
+                                                    <div className="d-flex align-items-center">
+                                                        <img
+                                                            src={"http://localhost:8000/" + notification.userComment.img}
+                                                            alt=""
+                                                            style={{ width: 45, height: 45 }}
+                                                            className="rounded-circle"
+                                                        />
+                                                        <Link href={"post/" + notification.post_id}>
+                                                            <div className="ms-3">
+                                                                <p className="fw-bold mb-1">{notification.userComment.name}</p>
+                                                                <p className="text-muted mb-0">{notification.userComment.name} commented on your post: {notification.content}</p>
+                                                            </div>
+                                                        </Link>
+
+                                                    </div>
+                                                    {/* <span className="badge rounded-pill badge-success">Active</span> */}
+                                                </li>
+                                            )
+                                        })
+                                    }
+
+
+                                </ul>
+
+                            }
+
                         </li>
                         <li className="nav-item dropdown me-3 me-lg-1">
                             <a
@@ -278,7 +318,7 @@ export default function Header(props) {
                     {/* Right elements */}
                 </div>
             </nav>
-            {/* Navbar */}
+
         </>
 
 

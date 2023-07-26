@@ -18,8 +18,5 @@ use Laravel\Sanctum\Sanctum;
 // });
 
 Broadcast::channel('message.{recipient_id}', function ($user, $recipientId) {
-    // Kiểm tra xác thực người dùng và xác định liệu người dùng có quyền nghe kênh riêng tư hay không
-    // Ví dụ: Kiểm tra xem $user có phải là người nhận tin nhắn với $recipientId không
-    // Sanctum::actingAs($user);
     return $user->id === $recipientId;
 });

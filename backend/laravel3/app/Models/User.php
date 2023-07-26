@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
+
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -26,7 +27,10 @@ class User extends Authenticatable
 
     public function posts()
     {
-        return $this->hasMany(Post::class, 'user_id');
+        return $this->hasMany(Post::class, 'user_id')
+            ->where('friends.status', 'accepted')
+            ->with('user', 'comments.user', 'photos')
+            ->withCount('likes');
     }
 
 
@@ -39,9 +43,14 @@ class User extends Authenticatable
     {
         return $this->hasManyThrough(Post::class, Friend::class, 'user_id', 'user_id', 'id', 'friend_id')
             ->where('friends.status', 'accepted')
-            ->with('user', 'comments.user','photos')
+            ->with('user', 'comments.user', 'photos')
             ->withCount('likes')
             ->orderBy('posts.created_at', 'desc');
+    }
+
+    public function postPhotos()
+    {
+        return $this->hasManyThrough(Photo::class, Post::class, 'user_id', 'post_id');
     }
 
 

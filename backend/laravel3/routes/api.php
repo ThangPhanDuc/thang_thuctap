@@ -55,13 +55,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/getLastMessage', [ChatController::class, 'getLastMessage']);
 
     // post
+
     Route::post('/createPost', [PostController::class, 'createPost']);
 
     Route::get('/getAllPost', [PostController::class, 'getFriendPosts']);
 
     Route::get('/getPostById/{id}', [PostController::class, 'getPostById']);
 
-    
+    Route::get('/getPostByUserId/{id}', [PostController::class, 'getPostByUserId']);
 
     Route::post('/likePost', [PostController::class, 'likePost']);
 
@@ -71,4 +72,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('/getPostByKeyword', [SearchController::class, 'getPostByKeyword']);
 
+    //photo
+
+    Route::get('/getPhotosByUserId/{id}', [UserController::class, 'getPhotosByUserId']);
 });

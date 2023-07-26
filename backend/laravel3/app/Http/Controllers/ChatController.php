@@ -47,12 +47,5 @@ class ChatController extends Controller
         return $chats;
     }
 
-    // public function getLastMessage(Request $request)
-    // {
-    //     $user = Auth::user();
-    //     $recipient_id = $request->input('recipient_id');
-
-    //     $chats = User::all();
-    //     return $chats;
-    // }
+   
 }

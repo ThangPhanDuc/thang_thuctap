@@ -4,19 +4,26 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Post;
+use App\Models\User;
 
 class SearchController extends Controller
 {
     public function getPostByKeyword(Request $request)
     {
-        $keyword = $request->input('keyword');
-      
-
+        $keyword = $request->keyword;
+    
         $posts = Post::with('user', 'photos', 'comments.user')
             ->withCount('likes')
             ->where('content', 'like', "%$keyword%")
             ->orderBy('created_at', 'desc')
             ->paginate(2);
         return response()->json($posts);
+    }
+
+    public function getUserByKeyword(Request $request){
+        $keyword = $request->keyword;
+
+        $users = User::all();
+        return response()->json($users);
     }
 }

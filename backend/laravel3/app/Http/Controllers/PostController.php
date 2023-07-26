@@ -28,7 +28,6 @@ class PostController extends Controller
         $post->save();
 
         $images = $request->file('images');
-
         $imageName = time() . '_' . $images->getClientOriginalName();
         $images->move(public_path('Post_Images'), $imageName);
 
@@ -40,40 +39,20 @@ class PostController extends Controller
         return response()->json(['status' => 'create post successfully']);
     }
 
-    // public function getAllPost(Request $request)
-    // {
-    //     $user = Auth::user();
-    //     $user_id = $user->id;
-
-    //     $friendIds = Friend::selectRaw('CASE 
-    //                 WHEN user_id = ? THEN friend_id 
-    //                 WHEN friend_id = ? THEN user_id 
-    //                 END as friend_id', [$user_id, $user_id])
-    //         ->where('status', 'accepted')
-    //         ->pluck('friend_id')
-    //         ->filter() 
-    //         ->toArray();
-
-    //     array_push($friendIds, $user_id);
-
-    //     $posts = Post::whereIn('user_id', $friendIds)
-    //         ->with('user', 'photos', 'comments.user')
-    //         ->withCount('likes')
-    //         ->orderBy('created_at', 'desc')
-    //         ->paginate(2);
-    //     foreach ($posts as $post) {
-    //         $post->liked_by_user = $post->likes()->where('user_id', $user->id)->exists();
-    //     }
-    //     return $posts;
-    // }
-
     public function getFriendPosts(Request $request)
     {
         $user = Auth::user();
         $friendsPosts = $user->friendPosts()->paginate(10);
 
+        foreach ($friendsPosts as $post) {
+            $post->liked_by_user = $post->likes()->where('user_id', $user->id)->exists();
+        }
+
         return $friendsPosts;
     }
+
+   
+   
 
     public function getPostById(Request $request)
     {
@@ -92,7 +71,22 @@ class PostController extends Controller
 
         return response()->json($post);
     }
+    public function getPostByUserId(Request $request)
+    {
+        $userLogin = Auth::user();
+        $user_id = $request->id;
+        $posts = Post::where("user_id", $user_id)
+            ->with('user', 'comments.user', 'photos')
+            ->withCount('likes')
+            ->orderBy('posts.created_at', 'desc')
+            ->paginate(10);
 
+        foreach ($posts as $post) {
+            $post->liked_by_user = $post->likes()->where('user_id', $userLogin->id)->exists();
+        }
+
+        return response()->json($posts);
+    }
 
 
     public function likePost(Request $request)

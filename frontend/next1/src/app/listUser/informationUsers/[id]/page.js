@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import 'bootstrap/dist/css/bootstrap.css';
 import Link from 'next/link'
 
-function InformationOfOtherUsers({ params }) {
+function InformationUsers({ params }) {
   const { id } = params;
   const [user, setUser] = useState({});
   const [userIsLogin, setUserIsLogin] = useState({});
@@ -127,4 +127,4 @@ function InformationOfOtherUsers({ params }) {
   )
 }
 
-export default InformationOfOtherUsers
+export default InformationUsers

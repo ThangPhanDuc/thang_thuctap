@@ -14,17 +14,19 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import { useRouter } from 'next/navigation';
 import Link from 'next/link'
 
-export default function Profile() {
+export default function Profile({ params }) {
+  const { id } = params;
   const [user, setUser] = useState({});
   const [posts, setPosts] = useState([]);
   const [friends, setFriends] = useState([]);
+  const [photos, setPhotos] = useState([]);
 
   useEffect(() => {
-    getUser();
-    getAllPost();
-    // getFriendList();
+    getUserById();
+    getPostByUserId();
+    getPhotosByUserId();
   }, []);
-  const getUser = async () => {
+  const getUserById = async () => {
     const token = localStorage.getItem('token');
     const config = {
       headers: {
@@ -32,7 +34,7 @@ export default function Profile() {
       }
     };
     try {
-      const response = await axios.get('/user', config);
+      const response = await axios.get(`/getUserById/${id}`, config);
       const userInfo = response.data;
       setUser(userInfo);
     } catch (error) {
@@ -40,7 +42,7 @@ export default function Profile() {
     }
   };
 
-  const getAllPost = async () => {
+  const getPostByUserId = async () => {
     const token = localStorage.getItem('token');
     const config = {
       headers: {
@@ -48,32 +50,29 @@ export default function Profile() {
       }
     };
     try {
-      const response = await axios.get('/getAllPost', config);
-      setPosts(response.data);
+      const response = await axios.get(`/getPostByUserId/${id}`, config);
+      setPosts(response.data.data);
+      console.log(response.data.data);
     } catch (error) {
       console.error(error);
     }
   };
 
-  // const getFriendList = async () => {
-  //   const token = localStorage.getItem('token');
-  //   const config = {
-  //     headers: {
-  //       Authorization: `Bearer ${token}`
-  //     }
-  //   };
-  //   try {
-  //     const response = await axios.get('/getFriendList', config);
-  //     setFriends(response.data.friends);
-  //     console.log(response.data.friends);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
+  const getPhotosByUserId = async () => {
+    const token = localStorage.getItem('token');
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    };
+    try {
+      const response = await axios.get(`/getPhotosByUserId/${id}`, config);
+      setPhotos(response.data.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-  const getUpdatedPost = () => {
-    getAllPost();
-  }
 
 
   return (
@@ -97,7 +96,7 @@ export default function Profile() {
                     <div>
                       <img
                         className="profile-pic"
-                        src="https://bootdey.com/img/Content/avatar/avatar6.png"
+                        src={"http://localhost:8000/" + user.img}
                         alt="profile"
                       />
                       <span className="profile-name">{user.name}</span>
@@ -446,8 +445,7 @@ export default function Profile() {
                   return (
                     <PostCard key={index}
                       post={post}
-                      user={user}
-                       getUpdatedPost={getUpdatedPost()} />
+                    />
                   )
                 })}
 
@@ -463,87 +461,23 @@ export default function Profile() {
                       <h6 className="card-title">latest photos</h6>
                       <div className="latest-photos">
                         <div className="row">
-                          <div className="col-md-4">
-                            <figure>
-                              <img
-                                className="img-fluid"
-                                src="https://bootdey.com/img/Content/avatar/avatar1.png"
-                                alt=""
-                              />
-                            </figure>
-                          </div>
-                          <div className="col-md-4">
-                            <figure>
-                              <img
-                                className="img-fluid"
-                                src="https://bootdey.com/img/Content/avatar/avatar2.png"
-                                alt=""
-                              />
-                            </figure>
-                          </div>
-                          <div className="col-md-4">
-                            <figure>
-                              <img
-                                className="img-fluid"
-                                src="https://bootdey.com/img/Content/avatar/avatar3.png"
-                                alt=""
-                              />
-                            </figure>
-                          </div>
-                          <div className="col-md-4">
-                            <figure>
-                              <img
-                                className="img-fluid"
-                                src="https://bootdey.com/img/Content/avatar/avatar4.png"
-                                alt=""
-                              />
-                            </figure>
-                          </div>
-                          <div className="col-md-4">
-                            <figure>
-                              <img
-                                className="img-fluid"
-                                src="https://bootdey.com/img/Content/avatar/avatar5.png"
-                                alt=""
-                              />
-                            </figure>
-                          </div>
-                          <div className="col-md-4">
-                            <figure>
-                              <img
-                                className="img-fluid"
-                                src="https://bootdey.com/img/Content/avatar/avatar6.png"
-                                alt=""
-                              />
-                            </figure>
-                          </div>
-                          <div className="col-md-4">
-                            <figure className="mb-0">
-                              <img
-                                className="img-fluid"
-                                src="https://bootdey.com/img/Content/avatar/avatar7.png"
-                                alt=""
-                              />
-                            </figure>
-                          </div>
-                          <div className="col-md-4">
-                            <figure className="mb-0">
-                              <img
-                                className="img-fluid"
-                                src="https://bootdey.com/img/Content/avatar/avatar8.png"
-                                alt=""
-                              />
-                            </figure>
-                          </div>
-                          <div className="col-md-4">
-                            <figure className="mb-0">
-                              <img
-                                className="img-fluid"
-                                src="https://bootdey.com/img/Content/avatar/avatar9.png"
-                                alt=""
-                              />
-                            </figure>
-                          </div>
+                          {photos.map((photo, index) => {
+                            return (
+                              <div className="col-md-4">
+                                <Link href={"/post/" + photo.post_id}>
+                                  <figure>
+                                    <img
+                                      className="img-fluid"
+                                      src={"http://localhost:8000/" + photo.path}
+                                      alt=""
+                                    />
+                                  </figure>
+                                </Link>
+                              </div>
+                            )
+                          })}
+
+
                         </div>
                       </div>
                     </div>
