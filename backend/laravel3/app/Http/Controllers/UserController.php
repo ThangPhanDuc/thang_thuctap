@@ -44,6 +44,10 @@ class UserController extends Controller
         return response()->json(['message' => 'User updated successfully.']);
     }
 
+    public function getUser(Request $request){
+        return $request->user();
+    }
+
     public function getAllUser()
     {
         $users = User::all();
@@ -60,8 +64,8 @@ class UserController extends Controller
 
     public function getUserById(Request $request)
     {
-        $id = $request->id;
-        $user = User::findOrFail($id);
+        $user_id = $request->id;
+        $user = User::findOrFail($user_id);
         return $user;
     }
 

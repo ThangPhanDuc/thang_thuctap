@@ -25,9 +25,11 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
+    // Route::get('/user', function (Request $request) {
+    //     return $request->user();
+    // });
+
+    Route::get('/user', [UserController::class, 'getUser']);
 
     Route::post('/updateUser', [UserController::class, 'updateUser']);
 
@@ -39,40 +41,40 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     //friend
 
-    Route::get('/getFriendStatusByUserId/{id}', [FriendController::class, 'getFriendStatusByUserId']);
+    // Route::get('/getFriendStatusByUserId/{id}', [FriendController::class, 'getFriendStatusByUserId']);
 
-    Route::post('/updateStatusFriend', [FriendController::class, 'updateStatusFriend']);
+    // Route::post('/updateStatusFriend', [FriendController::class, 'updateStatusFriend']);
 
-    Route::get('/getFriendList', [FriendController::class, 'getFriendList']);
+    // Route::get('/getFriendList', [FriendController::class, 'getFriendList']);
 
-    Route::get('/getFriendSuggestions', [FriendController::class, 'getFriendSuggestions']);
+    // Route::get('/getFriendSuggestions', [FriendController::class, 'getFriendSuggestions']);
     //message
 
-    Route::post('/sentMessage', [ChatController::class, 'sentMessage']);
+    // Route::post('/sentMessage', [ChatController::class, 'sentMessage']);
 
-    Route::get('/getMessage', [ChatController::class, 'getMessage']);
+    // Route::get('/getMessage', [ChatController::class, 'getMessage']);
 
-    Route::get('/getLastMessage', [ChatController::class, 'getLastMessage']);
+    // Route::get('/getLastMessage', [ChatController::class, 'getLastMessage']);
 
     // post
 
-    Route::post('/createPost', [PostController::class, 'createPost']);
+    // Route::post('/createPost', [PostController::class, 'createPost']);
 
-    Route::get('/getAllPost', [PostController::class, 'getFriendPosts']);
+    // Route::get('/getAllPost', [PostController::class, 'getFriendPosts']);
 
-    Route::get('/getPostById/{id}', [PostController::class, 'getPostById']);
+    // Route::get('/getPostById/{id}', [PostController::class, 'getPostById']);
 
-    Route::get('/getPostByUserId/{id}', [PostController::class, 'getPostByUserId']);
+    // Route::get('/getPostByUserId/{id}', [PostController::class, 'getPostByUserId']);
 
-    Route::post('/likePost', [PostController::class, 'likePost']);
+    // Route::post('/likePost', [PostController::class, 'likePost']);
 
-    Route::post('/commentPost', [PostController::class, 'commentPost']);
+    // Route::post('/commentPost', [PostController::class, 'commentPost']);
 
     //search
 
-    Route::get('/getPostByKeyword', [SearchController::class, 'getPostByKeyword']);
+    // Route::get('/getPostByKeyword', [SearchController::class, 'getPostByKeyword']);
 
-    //photo
+    // photo
 
     Route::get('/getPhotosByUserId/{id}', [UserController::class, 'getPhotosByUserId']);
 });

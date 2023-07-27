@@ -14,19 +14,18 @@ class Friend extends Model
     public $timestamps = true;
 
     protected $fillable = [
-        'user_id',
-        'friend_id',
-        'status',
+        'userId_1',
+        'userId_2',
     ];
 
-    public function user()
+    public function user1()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'userId_1');
     }
 
-    public function friend()
+    public function user2()
     {
-        return $this->belongsTo(User::class, 'friend_id');
+        return $this->belongsTo(User::class, 'userId_2');
     }
 
     
