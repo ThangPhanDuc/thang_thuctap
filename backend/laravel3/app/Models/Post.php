@@ -58,5 +58,4 @@ class Post extends Model
         return $vietnamDateTime->format('H:i:s d/m/Y');
     }
 
-   
 }

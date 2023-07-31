@@ -11,23 +11,11 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 
 export default function Post({ params }) {
     const { id } = params;
-    const [user, setUser] = useState({});
     const [post, setPost] = useState({});
 
-    const getUser = async () => {
-        const token = localStorage.getItem('token');
-        const config = {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        };
-        try {
-            const response = await axios.get('/user', config);
-            setUser(response.data);
-        } catch (error) {
-            console.error(error);
-        }
-    };
+    useEffect(() => {
+        getPostById();
+    }, []);
 
     const getPostById = async () => {
         const token = localStorage.getItem('token');
@@ -43,19 +31,11 @@ export default function Post({ params }) {
             console.error(error);
         }
     };
-    useEffect(() => {
-        getUser();
-        getPostById();
-    }, []);
-
-    const getUpdatedPost=()=>{
-        getPostById();
-    }
 
     return (
         <>
             <Header />
-            <PostCard post={post} user={user} getUpdatedPost={getUpdatedPost()} />
+            <PostCard post={post} />
         </>
     )
 }

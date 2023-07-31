@@ -22,7 +22,7 @@ export default function Home() {
     const emojis = ["😊", "😂", "😍", "👍", "❤️"];
     const [showEmojis, setShowEmojis] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-   
+
 
     useEffect(() => {
         getAllPost();
@@ -47,7 +47,7 @@ export default function Home() {
     useEffect(() => {
         getFriendList();
     }, []);
-   
+
 
     const getFriendList = async () => {
         const token = localStorage.getItem('token');
@@ -58,7 +58,7 @@ export default function Home() {
         };
         try {
             const response = await axios.get('/getFriendList', config);
-            setFriends(response.data);
+            setFriends(response.data.data);
             console.log(response.data);
         } catch (error) {
             console.error(error);
@@ -132,19 +132,33 @@ export default function Home() {
             <div className="container gedf-wrapper">
                 <div className="row">
                     <div className="col-md-3">
-                        <div className="card">
-                            <div className="card-body">
-
-                                <img
-                                    alt="image"
-                                    src={"http://localhost:8000/" + user.img}
-                                />
-                                <div className="h5">{user.name}</div>
-                                <div className="h7 text-muted">Email : {user.email}</div>
-                                <div className="h7">
-                                    {user.profile}
-                                </div>
+                        {/* <div className="d-flex align-items-center mb-3">
+                            <img
+                                 src={"http://localhost:8000/" + user.img}
+                                alt=""
+                                style={{ width: 30, height: 30 }}
+                                className="rounded-circle"
+                            />
+                            <div className="ms-3">
+                                <p className="fw-bold mb-1">{user.name}</p>
                             </div>
+                        </div> */}
+
+                        <div className="card">
+                            <Link href={"profile/" + user.id}>
+                                <div className="card-body">
+                                    <img
+                                        alt="image"
+                                        src={"http://localhost:8000/" + user.img}
+                                    />
+                                    <div className="h5">{user.name}</div>
+                                    <div className="h7 text-muted">Email : {user.email}</div>
+                                    <div className="h7">
+                                        {user.profile}
+                                    </div>
+                                </div>
+                            </Link>
+
                             <ul className="list-group list-group-flush">
                                 <li className="list-group-item">
                                     <div className="h6 text-muted">Followers</div>
@@ -157,6 +171,33 @@ export default function Home() {
                                 <li className="list-group-item">Vestibulum at eros</li>
                             </ul>
                         </div>
+                        <div className="list-group list-group-light ">
+                            <a
+                                href="#"
+                                className="list-group-home list-group-item list-group-item-action px-3 border-0  ripple "
+                            >
+                                Friends
+                            </a>
+                            <a
+                                href="#"
+                                className=" list-group-home list-group-item list-group-item-action px-3 border-0 ripple "
+                            >
+                                Video
+                            </a>
+                            <a
+                                href="#"
+                                className="list-group-home list-group-item list-group-item-action px-3 border-0 ripple"
+                            >
+                                Feeds
+                            </a>
+                            <a
+                                href="#"
+                                className="list-group-home list-group-item list-group-item-action px-3 border-0 ripple"
+                            >
+                                Groups
+                            </a>
+                        </div>
+
                     </div>
                     <div className="col-md-6 gedf-main " >
                         <form onSubmit={handSubmitPost}>
@@ -304,14 +345,14 @@ export default function Home() {
                         {posts.map((post, index) => {
                             let show = false;
                             return (
-                                <PostCard post ={post} />
+                                <PostCard post={post} />
                             )
                         })}
                     </div>
                     <div className="col-md-3">
                         <div className="push-down" />
                         <div className="card card-transparent">
-                            <h5 className="card-heading">Friends</h5>
+                            <h5 className="card-heading">Contacts</h5>
                             <div className="mda-list">
                                 {friends.map((friend, index) => {
                                     return (

@@ -25,28 +25,35 @@ class User extends Authenticatable
         'password',
     ];
 
-    // public function posts()
-    // {
-    //     return $this->hasMany(Post::class, 'user_id')
-    //         ->where('friends.status', 'accepted')
-    //         ->with('user', 'comments.user', 'photos')
-    //         ->withCount('likes');
-    // }
+    public function posts()
+    {
+        return $this->hasMany(Post::class, 'user_id')
+            ->where('friends.status', 'accepted')
+            ->with('user', 'comments.user', 'photos')
+            ->withCount('likes');
+    }
 
 
-    // public function friends()
-    // {
-    //     return $this->belongsToMany(User::class, 'friends', 'user_id', 'friend_id')->wherePivot('status', 'accepted');
-    // }
+    public function friends()
+    {
+        return $this->belongsToMany(User::class, 'friends', 'user_id', 'friend_id')->wherePivot('status', 'accepted');
+    }
 
-    // public function friendPosts()
-    // {
-    //     return $this->hasManyThrough(Post::class, Friend::class, 'user_id', 'user_id', 'id', 'friend_id')
-    //         ->where('friends.status', 'accepted')
-    //         ->with('user', 'comments.user', 'photos')
-    //         ->withCount('likes')
-    //         ->orderBy('posts.created_at', 'desc');
-    // }
+    public function friendPosts()
+    {
+        return $this->hasManyThrough(Post::class, Friend::class, 'user_id', 'user_id', 'id', 'friend_id')
+            ->where('friends.status', 'accepted')
+            ->with('user', 'comments.user', 'photos')
+            ->withCount('likes')
+            ->orderBy('posts.created_at', 'desc');
+    }
+
+    //lay danh sach nhung nguoi gui loi moi ken ban den minh
+    public function getFriendRequestsReceived()
+    {
+        return $this->belongsToMany(User::class, 'friends', 'friend_id', 'user_id',)
+                    ->wherePivot('status', 'pending');
+    }
 
     public function postPhotos()
     {

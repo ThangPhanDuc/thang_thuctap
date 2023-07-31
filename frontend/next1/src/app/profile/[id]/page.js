@@ -14,12 +14,18 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import { useRouter } from 'next/navigation';
 import Link from 'next/link'
 
+import { useAppSelector } from "@/redux/hooks";
+
 export default function Profile({ params }) {
   const { id } = params;
+
   const [user, setUser] = useState({});
   const [posts, setPosts] = useState([]);
   const [friends, setFriends] = useState([]);
   const [photos, setPhotos] = useState([]);
+
+  const userLogin = useAppSelector((state) => state.userReducer.value);
+
 
   useEffect(() => {
     getUserById();
@@ -101,26 +107,89 @@ export default function Profile({ params }) {
                       />
                       <span className="profile-name">{user.name}</span>
                     </div>
-                    <div className="d-none d-md-block">
-                      <button className="btn btn-primary btn-icon-text btn-edit-profile">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width={24}
-                          height={24}
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth={2}
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          className="feather feather-edit btn-icon-prepend"
-                        >
-                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                        </svg>{" "}
-                        Edit profile
-                      </button>
-                    </div>
+                    {
+                      userLogin.id == user.id ?
+                        <div className="d-none d-md-block d-flex" >
+
+                          <button className="btn btn-light btn-icon-text btn-edit-profile mr-1">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width={24}
+                              height={24}
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth={2}
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              className="feather feather-edit btn-icon-prepend"
+                            >
+                              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                            </svg>{" "}
+                            Add Story
+                          </button>
+                          <button className="btn btn-primary btn-icon-text btn-edit-profile">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width={24}
+                              height={24}
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth={2}
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              className="feather feather-edit btn-icon-prepend"
+                            >
+                              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                            </svg>{" "}
+                            Edit profile
+                          </button>
+                        </div>
+                        :
+                        <div className="d-none d-md-block d-flex" >
+
+                          <button className="btn btn-primary btn-icon-text btn-edit-profile mr-1">
+                            {/* <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width={24}
+                              height={24}
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth={2}
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              className="feather feather-edit btn-icon-prepend"
+                            >
+                              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                            </svg>{" "} */}
+                            Friends
+                          </button>
+                          <button className="btn btn-light btn-icon-text btn-edit-profile">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width={24}
+                              height={24}
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth={2}
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              className="feather feather-edit btn-icon-prepend"
+                            >
+                              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                            </svg>{" "}
+                            Message
+                          </button>
+                        </div>
+                    }
+
                   </div>
                 </div>
                 <div className="header-links">
@@ -161,7 +230,7 @@ export default function Profile({ params }) {
                         <circle cx={12} cy={7} r={4} />
                       </svg>
                       <a className="pt-1px d-none d-md-block" href="#">
-                        About
+                        Intro
                       </a>
                     </li>
                     <li className="header-link-item ml-3 pl-3 border-left d-flex align-items-center">
@@ -238,7 +307,7 @@ export default function Profile({ params }) {
               <div className="card rounded">
                 <div className="card-body">
                   <div className="d-flex align-items-center justify-content-between mb-2">
-                    <h6 className="card-title mb-0">About</h6>
+                    <h4 className="card-title mb-0">About</h4>
                     <div className="dropdown">
                       <button
                         className="btn p-0"

@@ -8,6 +8,7 @@ import { changeSearchKeyword } from "@/redux/features/searchSlice";
 import { setUser } from "@/redux/features/userSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import 'bootstrap/dist/css/bootstrap.css';
+import Link from 'next/link'
 
 export default function Header(props) {
 
@@ -214,7 +215,8 @@ export default function Header(props) {
                             </ul>
                         </li>
                         <li className="nav-item dropdown me-3 me-lg-1">
-                            <a
+                            <Link
+                                onClick={() => setShowNotification(!showNotification)}
                                 className="nav-link dropdown-toggle hidden-arrow"
                                 href="#"
                                 id="navbarDropdownMenuLink"
@@ -224,9 +226,9 @@ export default function Header(props) {
                             >
                                 <i className="fas fa-bell fa-lg" />
                                 <span className="badge rounded-pill badge-notification bg-danger">
-                                    12
+                                    {notifications.length}
                                 </span>
-                            </a>
+                            </Link>
                             {/* {showNotification && <ul
                                 className="dropdown-menu-end"
                                 aria-labelledby="navbarDropdownMenuLink"
@@ -262,7 +264,7 @@ export default function Header(props) {
                                                             style={{ width: 45, height: 45 }}
                                                             className="rounded-circle"
                                                         />
-                                                        <Link href={"post/" + notification.post_id}>
+                                                        <Link href={"/post/" + notification.post_id}>
                                                             <div className="ms-3">
                                                                 <p className="fw-bold mb-1">{notification.userComment.name}</p>
                                                                 <p className="text-muted mb-0">{notification.userComment.name} commented on your post: {notification.content}</p>

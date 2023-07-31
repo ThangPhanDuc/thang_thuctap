@@ -25,10 +25,7 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
-    // Route::get('/user', function (Request $request) {
-    //     return $request->user();
-    // });
-
+ 
     Route::get('/user', [UserController::class, 'getUser']);
 
     Route::post('/updateUser', [UserController::class, 'updateUser']);
@@ -39,40 +36,45 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('/index', [UserController::class, 'index']);
 
-    //friend
+    // friend
 
-    // Route::get('/getFriendStatusByUserId/{id}', [FriendController::class, 'getFriendStatusByUserId']);
+    Route::post('/friendRequest', [FriendController::class, 'manageFriendRequest']);
 
-    // Route::post('/updateStatusFriend', [FriendController::class, 'updateStatusFriend']);
+    Route::get('/getFriendStatusByUserId/{id}', [FriendController::class, 'getFriendStatusByUserId']);
 
-    // Route::get('/getFriendList', [FriendController::class, 'getFriendList']);
+    Route::post('/updateStatusFriend', [FriendController::class, 'updateStatusFriend']);
 
-    // Route::get('/getFriendSuggestions', [FriendController::class, 'getFriendSuggestions']);
-    //message
+    Route::get('/getFriendList', [FriendController::class, 'getFriendList']);
 
-    // Route::post('/sentMessage', [ChatController::class, 'sentMessage']);
+    Route::get('/getFriendSuggestions', [FriendController::class, 'getFriendSuggestions']);
 
-    // Route::get('/getMessage', [ChatController::class, 'getMessage']);
+    Route::get('/getFriendRequestsReceived', [FriendController::class, 'getFriendRequestsReceived']);
 
-    // Route::get('/getLastMessage', [ChatController::class, 'getLastMessage']);
+    // message
+
+    Route::post('/sentMessage', [ChatController::class, 'sentMessage']);
+
+    Route::get('/getMessage', [ChatController::class, 'getMessage']);
+
+    Route::get('/getLastMessage', [ChatController::class, 'getLastMessage']);
 
     // post
 
-    // Route::post('/createPost', [PostController::class, 'createPost']);
+    Route::post('/createPost', [PostController::class, 'createPost']);
 
-    // Route::get('/getAllPost', [PostController::class, 'getFriendPosts']);
+    Route::get('/getAllPost', [PostController::class, 'getFriendPosts']);
 
-    // Route::get('/getPostById/{id}', [PostController::class, 'getPostById']);
+    Route::get('/getPostById/{id}', [PostController::class, 'getPostById']);
 
-    // Route::get('/getPostByUserId/{id}', [PostController::class, 'getPostByUserId']);
+    Route::get('/getPostByUserId/{id}', [PostController::class, 'getPostByUserId']);
 
-    // Route::post('/likePost', [PostController::class, 'likePost']);
+    Route::post('/likePost', [PostController::class, 'likePost']);
 
-    // Route::post('/commentPost', [PostController::class, 'commentPost']);
+    Route::post('/commentPost', [PostController::class, 'commentPost']);
 
-    //search
+    // search
 
-    // Route::get('/getPostByKeyword', [SearchController::class, 'getPostByKeyword']);
+    Route::get('/getPostByKeyword', [SearchController::class, 'getPostByKeyword']);
 
     // photo
 

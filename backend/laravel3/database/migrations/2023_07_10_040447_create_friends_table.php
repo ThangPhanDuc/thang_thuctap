@@ -16,13 +16,14 @@ return new class extends Migration
         Schema::create('friends', function (Blueprint $table) {
             $table->id();
 
-            $table->unsignedBigInteger('userId_1');
-            $table->unsignedBigInteger('userId_2');
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('friend_id');
+            $table->string('status');
 
             $table->timestamps();
 
-            $table->foreign('userId_1')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('userId_2')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('friend_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

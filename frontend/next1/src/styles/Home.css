@@ -722,3 +722,13 @@ body {
   content: none;
   display: none;
 }
+
+.list-group-home  {
+  color: #333; 
+  transition: color 0.3s; 
+}
+
+.list-group-home :hover {
+  color: #000;
+  font-weight: bold; 
+}

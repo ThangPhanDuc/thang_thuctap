@@ -97,9 +97,10 @@ export default function PostCard(props) {
                         <div className="btn-group">
                             <button
                                 onClick={() => handleLikePost(post.id)}
-                                className="btn btn-white btn-xs">
+                                className={post.liked_by_user ? "btn btn-primary btn-xs" : "btn btn-white btn-xs"}>
                                 <i className="fa fa-thumbs-up" />
-                                {post.liked_by_user ? `You and ${post.likes_count - 1} others` : `${post.likes_count} like`}
+                                {/* {post.liked_by_user ? `You and ${post.likes_count - 1} others` : `${post.likes_count} like`} */}
+                                { post.likes_count + " like"}
                             </button>
                             <button className="btn btn-white btn-xs">
                                 <i className="fa fa-comments" /> {post.comments?.length} Comment
@@ -122,7 +123,7 @@ export default function PostCard(props) {
                                     </a>
                                     <div className="media-body">
                                         <a href="#">{comment.user.name}</a>
-                                        {comment.content}
+                                        {" " + comment.content}
                                         <br />
                                         <a href="#" className="small">
                                             <i
