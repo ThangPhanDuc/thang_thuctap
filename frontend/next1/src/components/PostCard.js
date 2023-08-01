@@ -71,12 +71,12 @@ export default function PostCard(props) {
             <div className="col-md-12 mx-auto  mt-4">
                 <div className="social-feed-box">
                     <div className="social-avatar">
-                        <a href="" className="pull-left">
+                        <Link href={"/profile/"+post.user?.id} className="pull-left">
                             <img
                                 alt="image"
                                 src={"http://localhost:8000/" + post.user?.img}
                             />
-                        </a>
+                        </Link>
                         <div className="media-body">
                             <a href="#">{post.user?.name}</a>
                             <small className="text-muted">{post.created_at}</small>

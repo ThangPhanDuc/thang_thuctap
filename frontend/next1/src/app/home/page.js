@@ -172,12 +172,12 @@ export default function Home() {
                             </ul>
                         </div>
                         <div className="list-group list-group-light ">
-                            <a
-                                href="#"
+                            <Link
+                                href="/friends"
                                 className="list-group-home list-group-item list-group-item-action px-3 border-0  ripple "
                             >
                                 Friends
-                            </a>
+                            </Link>
                             <a
                                 href="#"
                                 className=" list-group-home list-group-item list-group-item-action px-3 border-0 ripple "

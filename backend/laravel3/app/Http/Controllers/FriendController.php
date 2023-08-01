@@ -27,6 +27,7 @@ class FriendController extends Controller
                 break;
             case 'delete_request':
                 $success = $this->cancelFriendRequest($friendId, $userId);
+                // $success = $this->deleteFriendRequest( $userId,$friendId);
                 break;
             case 'unfriend':
                 $success = $this->unfriend($userId, $friendId);
@@ -130,7 +131,7 @@ class FriendController extends Controller
         return $friends;
     }
 
-    public function getFriendRequestsReceived()
+    public function getFriendRequestsReceived(Request $request)
     {
         $user = Auth::user();
         $friendRequestsSent = $user->getFriendRequestsReceived()->paginate(100);

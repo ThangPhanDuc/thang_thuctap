@@ -11,8 +11,10 @@ use App\Models\Comment;
 use App\Models\User;
 use Illuminate\Support\Facades\File;
 use App\Events\CommentPost;
+use App\Events\NotificationEvent;
 use App\Models\Friend;
 use Illuminate\Pagination\Paginator;
+use App\Models\Notification;
 
 class PostController extends Controller
 {
@@ -50,9 +52,6 @@ class PostController extends Controller
 
         return $friendsPosts;
     }
-
-   
-   
 
     public function getPostById(Request $request)
     {
@@ -118,20 +117,40 @@ class PostController extends Controller
         $content = $request->content;
         $post = Post::where("id", $post_id)->first();
 
+        // if ($post->user_id != $user->id) {
+        //     event(new CommentPost(
+        //         $post->user_id,
+        //         $user,
+        //         $post_id,
+        //         $content,
+        //     ));
+        // }
+
+        $data =   [
+            'userComment' => $user,
+            'post_id' => $post_id,
+            'content' => $content,
+        ];
+
         if ($post->user_id != $user->id) {
-            event(new CommentPost(
+            event(new NotificationEvent(
                 $post->user_id,
-                $user,
-                $post_id,
-                $content,
+                "comment_notification",
+                $data,
             ));
         }
 
-        // $comment = new Comment();
-        // $comment->user_id = $user->id;
-        // $comment->post_id = $post_id;
-        // $comment->content = $content;
-        // $comment->save();
+        $comment = new Comment();
+        $comment->user_id = $user->id;
+        $comment->post_id = $post_id;
+        $comment->content = $content;
+        $comment->save();
+
+        $notification = new Notification();
+        $notification->user_id = $post_id;
+        $notification->type = "comment_notification";
+        $notification->data =  $data;
+        $notification->save();
 
         return response()->json(['status' => 'comment post successfully']);
     }

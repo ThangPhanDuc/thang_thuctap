@@ -28,9 +28,10 @@ class User extends Authenticatable
     public function posts()
     {
         return $this->hasMany(Post::class, 'user_id')
-            ->where('friends.status', 'accepted')
+            // ->where('friends.status', 'accepted')
             ->with('user', 'comments.user', 'photos')
-            ->withCount('likes');
+            ->withCount('likes')
+            ->orderBy('posts.created_at', 'desc');
     }
 
 
@@ -48,16 +49,23 @@ class User extends Authenticatable
             ->orderBy('posts.created_at', 'desc');
     }
 
+
+
     //lay danh sach nhung nguoi gui loi moi ken ban den minh
     public function getFriendRequestsReceived()
     {
         return $this->belongsToMany(User::class, 'friends', 'friend_id', 'user_id',)
-                    ->wherePivot('status', 'pending');
+            ->wherePivot('status', 'pending');
     }
 
     public function postPhotos()
     {
         return $this->hasManyThrough(Photo::class, Post::class, 'user_id', 'post_id');
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class, 'user_id');
     }
 
 

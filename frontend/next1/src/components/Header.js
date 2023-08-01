@@ -21,6 +21,26 @@ export default function Header(props) {
 
     const user = useAppSelector((state) => state.userReducer.value);
 
+    // useEffect(() => {
+    //     Pusher.logToConsole = true;
+
+    //     var pusher = new Pusher('0699e48d294babf98468', {
+    //         cluster: 'ap1'
+    //     });
+
+    //     var channel = pusher.subscribe('comment.' + user.id);
+    //     channel.bind('new-comment', function (data) {
+    //         // alert(data.userComment.name + "commented on your post: " + data.content);
+    //         setNotifications(prevNotifications => [...prevNotifications, data]);
+    //     });
+
+    //     var channel = pusher.subscribe('chat.' + user.id);
+    //     channel.bind('message', function (data) {
+    //         setMessages(prevMessages => [...prevMessages, data]);
+    //     });
+
+    // }, [user.id]);
+
     useEffect(() => {
         Pusher.logToConsole = true;
 
@@ -28,21 +48,17 @@ export default function Header(props) {
             cluster: 'ap1'
         });
 
-        var channel = pusher.subscribe('comment.' + user.id);
-        channel.bind('new-comment', function (data) {
+        var channel = pusher.subscribe('notification.' + user.id);
+        channel.bind('new-notification', function (data) {
             // alert(data.userComment.name + "commented on your post: " + data.content);
             setNotifications(prevNotifications => [...prevNotifications, data]);
-        });
-
-        var channel = pusher.subscribe('chat.' + user.id);
-        channel.bind('message', function (data) {
-            setMessages(prevMessages => [...prevMessages, data]);
         });
 
     }, [user.id]);
 
     useEffect(() => {
         getUser();
+        getNotification();
     }, []);
     const getUser = async () => {
         const token = localStorage.getItem('token');
@@ -54,12 +70,27 @@ export default function Header(props) {
         try {
             const response = await axios.get('/user', config);
             const userInfo = response.data;
-            // setUser(userInfo);
             dispatch(setUser(userInfo))
         } catch (error) {
             console.error(error);
         }
     };
+
+    const getNotification = async () => {
+        const token = localStorage.getItem('token');
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        };
+        try {
+            const response = await axios.get('/getNotification', config);
+            setNotifications(response.data.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     const router = useRouter();
     const handSearch = (event) => {
         event.preventDefault();
@@ -116,14 +147,14 @@ export default function Header(props) {
                     {/* Center elements */}
                     <ul className="navbar-nav flex-row d-none d-md-flex">
                         <li className="nav-item me-3 me-lg-1 active">
-                            <a className="nav-link" href="#">
+                            <Link className="nav-link" href="/home">
                                 <span>
                                     <i className="fas fa-home fa-lg" />
                                 </span>
                                 <span className="badge rounded-pill badge-notification bg-danger">
                                     1
                                 </span>
-                            </a>
+                            </Link>
                         </li>
                         <li className="nav-item me-3 me-lg-1">
                             <a className="nav-link" href="#">
@@ -180,9 +211,9 @@ export default function Header(props) {
                             </a>
                         </li>
                         <li className="nav-item dropdown me-3 me-lg-1">
-                            <a
+                            <Link
                                 className="nav-link dropdown-toggle hidden-arrow"
-                                href="#"
+                                href="/chat/1"
                                 id="navbarDropdownMenuLink"
                                 role="button"
                                 data-mdb-toggle="dropdown"
@@ -192,7 +223,7 @@ export default function Header(props) {
                                 <span className="badge rounded-pill badge-notification bg-danger">
                                     6
                                 </span>
-                            </a>
+                            </Link>
                             <ul
                                 className="dropdown-menu dropdown-menu-end"
                                 aria-labelledby="navbarDropdownMenuLink"
@@ -249,39 +280,38 @@ export default function Header(props) {
                                     </a>
                                 </li>
                             </ul>} */}
-                            {showNotification &&
-                                <ul className="list-group list-group-light"
+                            {showNotification && (
+                                <ul
+                                    className="list-group list-group-light"
                                     style={{ position: 'absolute', marginTop: '25px', zIndex: 1, marginLeft: '-330px' }}
                                 >
-                                    {
-                                        notifications.map((notification, index) => {
-                                            return (
-                                                <li className="list-group-item d-flex justify-content-between align-items-center">
-                                                    <div className="d-flex align-items-center">
-                                                        <img
-                                                            src={"http://localhost:8000/" + notification.userComment.img}
-                                                            alt=""
-                                                            style={{ width: 45, height: 45 }}
-                                                            className="rounded-circle"
-                                                        />
-                                                        <Link href={"/post/" + notification.post_id}>
-                                                            <div className="ms-3">
-                                                                <p className="fw-bold mb-1">{notification.userComment.name}</p>
-                                                                <p className="text-muted mb-0">{notification.userComment.name} commented on your post: {notification.content}</p>
-                                                            </div>
-                                                        </Link>
-
-                                                    </div>
-                                                    {/* <span className="badge rounded-pill badge-success">Active</span> */}
-                                                </li>
-                                            )
-                                        })
-                                    }
-
-
+                                    {notifications.map((notification, index) => (
+                                        notification.type === "comment_notification" ? (
+                                            <li className="list-group-item d-flex justify-content-between align-items-center" key={index}>
+                                                <div className="d-flex align-items-center">
+                                                    <img
+                                                        src={"http://localhost:8000/" + notification.data.userComment.img}
+                                                        alt=""
+                                                        style={{ width: 45, height: 45 }}
+                                                        className="rounded-circle"
+                                                    />
+                                                    <Link href={"/post/" + notification.data.post_id}>
+                                                        <div className="ms-3">
+                                                            <p className="fw-bold mb-1">{notification.data.userComment.name}</p>
+                                                            <p className="text-muted mb-0">{notification.data.userComment.name} commented on your post: {notification.data.content}</p>
+                                                        </div>
+                                                    </Link>
+                                                </div>
+                                            </li>
+                                        ) : notification.type === "like_notification" ? (
+                                            <h1 key={index}>123</h1>
+                                        ) : notification.type === "friend_request_notification" ? (
+                                            <h1 key={index}>123</h1>
+                                        ) : null
+                                    ))}
                                 </ul>
+                            )}
 
-                            }
 
                         </li>
                         <li className="nav-item dropdown me-3 me-lg-1">

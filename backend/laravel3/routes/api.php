@@ -8,6 +8,7 @@ use App\Http\Controllers\FriendController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -79,4 +80,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // photo
 
     Route::get('/getPhotosByUserId/{id}', [UserController::class, 'getPhotosByUserId']);
+
+    //notifications
+    
+    Route::get('/getNotification', [NotificationController::class, 'getNotification']);
+
 });

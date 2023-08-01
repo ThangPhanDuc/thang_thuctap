@@ -9,10 +9,8 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use App\Models\User;
-use Nette\Utils\Json;
 
-class CommentPost implements ShouldBroadcast
+class NotificationEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -21,20 +19,18 @@ class CommentPost implements ShouldBroadcast
      *
      * @return void
      */
-    
-     public $user_id;
-     public $userComment;
-     public $post_id;
-     public $content;
 
-    public function __construct(int $user_id,User $userComment,int $post_id,string $content)
+    public $user_id;
+    public $type;
+    public $data;
+
+
+    public function __construct(int $user_id, string $type, array $data)
     {
         $this->user_id = $user_id;
-        $this->userComment = $userComment;
-        $this->post_id = $post_id;
-        $this->content = $content;
+        $this->type = $type;
+        $this->data = $data;
     }
-
     /**
      * Get the channels the event should broadcast on.
      *
@@ -42,13 +38,11 @@ class CommentPost implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('comment.'.$this->user_id);
+        return new Channel('notification.' . $this->user_id);
     }
 
     public function broadcastAs()
     {
-        return 'new-comment';
+        return 'new-notification';
     }
-
-    
 }
