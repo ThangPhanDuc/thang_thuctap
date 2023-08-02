@@ -100,14 +100,32 @@ class PostController extends Controller
         if ($existingLike) {
             $existingLike->delete();
             return response()->json(['status' => 'You have unliked this post']);
+        } else {
+            $post = Post::where("id", $post_id)->first();
+            $data =   [
+                'userLike' => $user,
+                'post_id' => $post_id,
+            ];
+            event(new NotificationEvent(
+                $post->user_id,
+                "like_notification",
+                $data,
+            ));
+
+            $notification = new Notification();
+            $notification->user_id = $post_id;
+            $notification->type = "like_notification";
+            $notification->data =  $data;
+            $notification->save();
+
+
+            $like = new Like();
+            $like->user_id = $user->id;
+            $like->post_id = $post_id;
+            $like->save();
+
+            return response()->json(['status' => 'like post successfully']);
         }
-
-        $like = new Like();
-        $like->user_id = $user->id;
-        $like->post_id = $post_id;
-        $like->save();
-
-        return response()->json(['status' => 'like post successfully']);
     }
 
     public function commentPost(Request $request)
@@ -116,15 +134,6 @@ class PostController extends Controller
         $post_id = $request->post_id;
         $content = $request->content;
         $post = Post::where("id", $post_id)->first();
-
-        // if ($post->user_id != $user->id) {
-        //     event(new CommentPost(
-        //         $post->user_id,
-        //         $user,
-        //         $post_id,
-        //         $content,
-        //     ));
-        // }
 
         $data =   [
             'userComment' => $user,

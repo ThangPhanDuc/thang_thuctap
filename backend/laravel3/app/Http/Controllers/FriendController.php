@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Friend;
+use App\Models\Notification;
+use App\Events\NotificationEvent;
 
 class FriendController extends Controller
 {
@@ -25,9 +27,12 @@ class FriendController extends Controller
             case 'cancel_request':
                 $success = $this->cancelFriendRequest($userId, $friendId);
                 break;
-            case 'delete_request':
-                $success = $this->cancelFriendRequest($friendId, $userId);
-                // $success = $this->deleteFriendRequest( $userId,$friendId);
+            // case 'delete_request':
+            //     $success = $this->cancelFriendRequest($friendId, $userId);
+            //     // $success = $this->deleteFriendRequest( $userId,$friendId);
+            //     break;
+            case 'reject_request':
+                $success = $this->rejectFriendRequest($userId, $friendId);
                 break;
             case 'unfriend':
                 $success = $this->unfriend($userId, $friendId);
@@ -55,17 +60,39 @@ class FriendController extends Controller
         if ($existingRequest) {
             $existingRequest->update(['status' => 'pending']);
         } else {
+            $sender = User::where("id", $senderId)->first();
+            $data =   [
+                'sender' => $sender,
+                'status' => "pending"
+                //status pending accepted  reject
+            ];
+
+            event(new NotificationEvent(
+                $receiverId,
+                "friend_request_notification",
+                $data,
+            ));
+
+            $notification = new Notification();
+            $notification->user_id = $receiverId;
+            $notification->type = "friend_request_notification";
+            $notification->data =  $data;
+            $notification->save();
+
             $friend = new Friend();
             $friend->user_id = $senderId;
             $friend->friend_id = $receiverId;
             $friend->status = "pending";
             $friend->save();
+
             // Friend::create([
             //     'user_id' => $senderId,
             //     'friend_id' => $receiverId,
             //     'status' => 'pending',
             // ]);
         }
+
+
 
         return ['success' => true, 'message' => 'Friend request sent successfully.'];
     }
@@ -95,6 +122,19 @@ class FriendController extends Controller
             $friend->status = "accepted";
             $friend->save();
 
+
+            $notification = Notification::where('user_id', $userId)
+                ->where('data->sender->id', $friendId)
+                ->where('type', 'friend_request_notification')
+                ->first();
+
+            if ($notification) {
+                $data = $notification->data;
+                $data['status'] = 'accepted';
+                $notification->data = $data;
+                $notification->save();
+            }
+
             return ['success' => true, 'message' => 'Friend request accepted.'];
         } else {
             return ['success' => false, 'message' => 'No pending friend request from this user.'];
@@ -107,6 +147,29 @@ class FriendController extends Controller
             ->where('friend_id', $receiverId)
             ->where('status', 'pending')
             ->delete();
+
+        return ['success' => true, 'message' => 'Friend request canceled.'];
+    }
+
+
+    private function rejectFriendRequest($userId, $friendId)
+    {
+        Friend::where('user_id', $friendId)
+            ->where('friend_id', $userId)
+            ->where('status', 'pending')
+            ->delete();
+
+        $notification = Notification::where('user_id', $userId)
+            ->where('data->sender->id', $friendId)
+            ->where('type', 'friend_request_notification')
+            ->first();
+
+        if ($notification) {
+            $data = $notification->data;
+            $data['status'] = 'reject';
+            $notification->data = $data;
+            $notification->save();
+        }
 
         return ['success' => true, 'message' => 'Friend request canceled.'];
     }

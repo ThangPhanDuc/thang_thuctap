@@ -10,6 +10,10 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import 'bootstrap/dist/css/bootstrap.css';
 import Link from 'next/link'
 
+import CommentNotification from "./notifications/CommentNotification";
+import FriendRequestNotification from "./notifications/FriendRequestNotification";
+import LikeNotification from "./notifications/LikeNotification";
+
 export default function Header(props) {
 
     const [notifications, setNotifications] = useState([]);
@@ -260,26 +264,6 @@ export default function Header(props) {
                                     {notifications.length}
                                 </span>
                             </Link>
-                            {/* {showNotification && <ul
-                                className="dropdown-menu-end"
-                                aria-labelledby="navbarDropdownMenuLink"
-                            >
-                                <li>
-                                    <a className="dropdown-item" href="#">
-                                        Some news
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="dropdown-item" href="#">
-                                        Another news
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="dropdown-item" href="#">
-                                        Something else here
-                                    </a>
-                                </li>
-                            </ul>} */}
                             {showNotification && (
                                 <ul
                                     className="list-group list-group-light"
@@ -287,26 +271,11 @@ export default function Header(props) {
                                 >
                                     {notifications.map((notification, index) => (
                                         notification.type === "comment_notification" ? (
-                                            <li className="list-group-item d-flex justify-content-between align-items-center" key={index}>
-                                                <div className="d-flex align-items-center">
-                                                    <img
-                                                        src={"http://localhost:8000/" + notification.data.userComment.img}
-                                                        alt=""
-                                                        style={{ width: 45, height: 45 }}
-                                                        className="rounded-circle"
-                                                    />
-                                                    <Link href={"/post/" + notification.data.post_id}>
-                                                        <div className="ms-3">
-                                                            <p className="fw-bold mb-1">{notification.data.userComment.name}</p>
-                                                            <p className="text-muted mb-0">{notification.data.userComment.name} commented on your post: {notification.data.content}</p>
-                                                        </div>
-                                                    </Link>
-                                                </div>
-                                            </li>
+                                           <CommentNotification notification={notification} />
                                         ) : notification.type === "like_notification" ? (
-                                            <h1 key={index}>123</h1>
+                                            <LikeNotification notification={notification} />
                                         ) : notification.type === "friend_request_notification" ? (
-                                            <h1 key={index}>123</h1>
+                                           <FriendRequestNotification notification={notification} />
                                         ) : null
                                     ))}
                                 </ul>

@@ -72,7 +72,7 @@ export default function FriendRequests() {
                                             onClick={() => updateFriendRequestStatus(friendRequest.id, "accept_request")}
                                             type="button" className="btn btn-primary mt-2">Confirm</button>
                                         <button
-                                            onClick={() => updateFriendRequestStatus(friendRequest.id, "delete_request")}
+                                            onClick={() => updateFriendRequestStatus(friendRequest.id, "reject_request")}
                                             type="button" className="btn btn-secondary mt-1">Delete</button>
                                     </div>
                                 </div>

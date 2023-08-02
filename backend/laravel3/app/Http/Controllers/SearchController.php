@@ -20,10 +20,13 @@ class SearchController extends Controller
         return response()->json($posts);
     }
 
-    public function getUserByKeyword(Request $request){
+    public function getUserByKeyword(Request $request)
+    {
         $keyword = $request->keyword;
-
-        $users = User::all();
+    
+        $users = User::where('name', 'like', '%' . $keyword . '%')->get();
+    
         return response()->json($users);
     }
+    
 }
