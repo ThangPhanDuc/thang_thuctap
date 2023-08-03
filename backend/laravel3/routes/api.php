@@ -41,13 +41,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::post('/friendRequest', [FriendController::class, 'manageFriendRequest']);
 
-    Route::get('/getFriendStatusByUserId/{id}', [FriendController::class, 'getFriendStatusByUserId']);
-
-    Route::post('/updateStatusFriend', [FriendController::class, 'updateStatusFriend']);
-
     Route::get('/getFriendList', [FriendController::class, 'getFriendList']);
-
-    Route::get('/getFriendSuggestions', [FriendController::class, 'getFriendSuggestions']);
 
     Route::get('/getFriendRequestsReceived', [FriendController::class, 'getFriendRequestsReceived']);
 

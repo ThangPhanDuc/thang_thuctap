@@ -7,7 +7,9 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Friend;
 use App\Models\Notification;
+use App\Models\NotificationFriend;
 use App\Events\NotificationEvent;
+
 
 class FriendController extends Controller
 {
@@ -27,12 +29,9 @@ class FriendController extends Controller
             case 'cancel_request':
                 $success = $this->cancelFriendRequest($userId, $friendId);
                 break;
-            // case 'delete_request':
-            //     $success = $this->cancelFriendRequest($friendId, $userId);
-            //     // $success = $this->deleteFriendRequest( $userId,$friendId);
-            //     break;
             case 'reject_request':
                 $success = $this->rejectFriendRequest($userId, $friendId);
+                // $success = $this->cancelFriendRequest($friendId, $userId);
                 break;
             case 'unfriend':
                 $success = $this->unfriend($userId, $friendId);
@@ -63,8 +62,6 @@ class FriendController extends Controller
             $sender = User::where("id", $senderId)->first();
             $data =   [
                 'sender' => $sender,
-                'status' => "pending"
-                //status pending accepted  reject
             ];
 
             event(new NotificationEvent(
@@ -73,17 +70,24 @@ class FriendController extends Controller
                 $data,
             ));
 
-            $notification = new Notification();
-            $notification->user_id = $receiverId;
-            $notification->type = "friend_request_notification";
-            $notification->data =  $data;
-            $notification->save();
-
             $friend = new Friend();
             $friend->user_id = $senderId;
             $friend->friend_id = $receiverId;
             $friend->status = "pending";
             $friend->save();
+
+            $notification = new Notification();
+            $notification->sender_id = $senderId;
+            $notification->recipient_id =  $receiverId;
+            $notification->type = "friend_request_notification";
+            $notification->save();
+
+            // $notificationFriend = new NotificationFriend();
+            // $notificationFriend->notification_id = $notification->id;
+            // $notificationFriend->friend_id = $;
+            // $notificationFriend->save();
+
+       
 
             // Friend::create([
             //     'user_id' => $senderId,
@@ -123,17 +127,19 @@ class FriendController extends Controller
             $friend->save();
 
 
-            $notification = Notification::where('user_id', $userId)
-                ->where('data->sender->id', $friendId)
-                ->where('type', 'friend_request_notification')
-                ->first();
+            // $notification = Notification::where('user_id', $userId)
+            //     ->where('data->sender->id', $friendId)
+            //     ->where('type', 'friend_request_notification')
+            //     ->first();
 
-            if ($notification) {
-                $data = $notification->data;
-                $data['status'] = 'accepted';
-                $notification->data = $data;
-                $notification->save();
-            }
+            // if ($notification) {
+            //     $data = $notification->data;
+            //     $data['status'] = 'accepted';
+            //     $notification->data = $data;
+            //     $notification->save();
+            // }
+
+            // $notification->delete();
 
             return ['success' => true, 'message' => 'Friend request accepted.'];
         } else {
@@ -159,17 +165,18 @@ class FriendController extends Controller
             ->where('status', 'pending')
             ->delete();
 
-        $notification = Notification::where('user_id', $userId)
-            ->where('data->sender->id', $friendId)
-            ->where('type', 'friend_request_notification')
-            ->first();
+        // $notification = Notification::where('user_id', $userId)
+        //     ->where('data->sender->id', $friendId)
+        //     ->where('type', 'friend_request_notification')
+        //     ->first();
 
-        if ($notification) {
-            $data = $notification->data;
-            $data['status'] = 'reject';
-            $notification->data = $data;
-            $notification->save();
-        }
+        // if ($notification) {
+        //     $data = $notification->data;
+        //     $data['status'] = 'reject';
+        //     $notification->data = $data;
+        //     $notification->save();
+        // }
+        // $notification->delete();
 
         return ['success' => true, 'message' => 'Friend request canceled.'];
     }
@@ -185,12 +192,12 @@ class FriendController extends Controller
         return ['success' => true, 'message' => 'Unfriended successfully.'];
     }
 
+    ///
+
     public function getFriendList(Request $request)
     {
-        $user = $request->user();
-        $user_id = $user->id;
+        $user = Auth::user();
         $friends = $user->friends()->paginate(100);
-
         return $friends;
     }
 
@@ -200,137 +207,4 @@ class FriendController extends Controller
         $friendRequestsSent = $user->getFriendRequestsReceived()->paginate(100);
         return $friendRequestsSent;
     }
-
-    // public function getFriendStatusByUserId(Request $request)
-    // {
-    //     $id = $request->id;
-    //     $friendStatus = Friend::where(function ($query) use ($id) {
-    //         $query->where('user_id', $id)
-    //             ->orWhere('friend_id', $id);
-    //     })->get();
-    //     return $friendStatus;
-    // }
-
-
-
-    // public function updateStatusFriend(Request $request)
-    // {
-    //     $user = Auth::user();
-    //     $friend_id = $request->friend_id;
-    //     $status = $request->status;
-
-    //     switch ($status) {
-    //         case "Add Friend":
-    //             $friend = new Friend();
-    //             $friend->user_id = $user->id;
-    //             $friend->friend_id = $friend_id;
-    //             $friend->status = "pending";
-    //             $friend->save();
-    //             return "Add friend successfully";
-
-    //         case "Confirm":
-    //             $friend = Friend::where('user_id', $friend_id)
-    //                 ->where('friend_id', $user->id)
-    //                 ->first();
-    //             if ($friend) {
-    //                 $friend->status = "accepted";
-    //                 $friend->save();
-    //                 return "Friend request accepted successfully";
-    //             } else {
-    //                 return "Friend request not found";
-    //             }
-
-    //         case "Cancel Request":
-    //             Friend::where('user_id', $user->id)
-    //                 ->where('friend_id', $friend_id)
-    //                 ->delete();
-    //             return "Friend request canceled";
-
-    //         case "Unfriend":
-    //             Friend::whereIn('user_id', [$user->id, $friend_id])
-    //                 ->whereIn('friend_id', [$user->id, $friend_id])
-    //                 ->delete();
-    //             return "Unfriended";
-
-    //         default:
-    //             return "Invalid status";
-    //     }
-    // }
-
-    // public function getFriendList(Request $request)
-    // {
-    //     $user = $request->user();
-    //     $user_id = $user->id;
-
-    //     $friendIds1 = Friend::where(function ($query) use ($user_id) {
-    //         $query->where('user_id', $user_id);
-    //     })
-    //         ->where('status', 'accepted')
-    //         ->pluck('friend_id')
-    //         ->toArray();
-
-    //     $friendIds2 = Friend::where(function ($query) use ($user_id) {
-    //         $query->where('friend_id', $user_id);
-    //     })
-    //         ->where('status', 'accepted')
-    //         ->pluck('user_id')
-    //         ->toArray();
-
-    //     $friendIds = array_merge($friendIds1, $friendIds2);
-
-    //     $friends = User::whereIn('id', $friendIds)
-    //         ->get();
-
-    //     return $friends;
-    // }
-
-    // public function getFriendList(Request $request)
-    // {
-    //     $user = Auth::user();
-    //     $friends = $user->friends()->get();
-    //     return $friends;
-
-
-
-    // }
-
-    // public function getFriendSuggestions(Request $request)
-    // {
-    //     $user = $request->user();
-    //     $user_id = $user->id;
-
-    //     $friendIds = $this->getFriendListByUserId($user_id);
-
-    //     $friendSuggestions = User::whereNotIn('id', $friendIds)->get();
-    //     foreach($friendSuggestions as $friendSuggestion){
-    //         $friendIdsSuggestion = $this->getFriendListByUserId($friendSuggestion->id);
-    //         $MutualFriendsId = array_intersect($friendIdsSuggestion,$friendIds);
-
-    //         $friendSuggestion->MutualFriends = count($MutualFriendsId);
-    //     }
-
-    //     return $friendSuggestion;
-    // }
-
-    // function getFriendListByUserId($user_id)
-    // {
-
-    //     $friendIds1 = Friend::where(function ($query) use ($user_id) {
-    //         $query->where('user_id', $user_id);
-    //     })
-    //         ->where('status', 'accepted')
-    //         ->pluck('friend_id')
-    //         ->toArray();
-
-    //     $friendIds2 = Friend::where(function ($query) use ($user_id) {
-    //         $query->where('friend_id', $user_id);
-    //     })
-    //         ->where('status', 'accepted')
-    //         ->pluck('user_id')
-    //         ->toArray();
-
-    //     $friendIds = array_merge($friendIds1, $friendIds2);
-
-    //     return $friendIds;
-    // }
 }

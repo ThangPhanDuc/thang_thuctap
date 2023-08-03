@@ -15,6 +15,8 @@ use App\Events\NotificationEvent;
 use App\Models\Friend;
 use Illuminate\Pagination\Paginator;
 use App\Models\Notification;
+use App\Models\NotificationLike;
+use App\Models\NotificationComment;
 
 class PostController extends Controller
 {
@@ -101,28 +103,36 @@ class PostController extends Controller
             $existingLike->delete();
             return response()->json(['status' => 'You have unliked this post']);
         } else {
-            $post = Post::where("id", $post_id)->first();
-            $data =   [
-                'userLike' => $user,
-                'post_id' => $post_id,
-            ];
-            event(new NotificationEvent(
-                $post->user_id,
-                "like_notification",
-                $data,
-            ));
-
-            $notification = new Notification();
-            $notification->user_id = $post_id;
-            $notification->type = "like_notification";
-            $notification->data =  $data;
-            $notification->save();
-
-
             $like = new Like();
             $like->user_id = $user->id;
             $like->post_id = $post_id;
             $like->save();
+
+            $post = Post::where("id", $post_id)->first();
+
+            if ($user->id != $post->user_id) {
+                $data =   [
+                    'userLike' => $user,
+                    'post_id' => $post_id,
+                ];
+                event(new NotificationEvent(
+                    $post->user_id,
+                    "like_notification",
+                    $data,
+                ));
+
+
+                $notification = new Notification();
+                $notification->sender_id = $user->id;
+                $notification->recipient_id =  $post->user_id;
+                $notification->type = "like_notification";
+                $notification->save();
+
+                $notificationLike = new NotificationLike();
+                $notificationLike->notification_id = $notification->id;
+                $notificationLike->like_id = $like->id;
+                $notificationLike->save();
+            }
 
             return response()->json(['status' => 'like post successfully']);
         }
@@ -133,21 +143,6 @@ class PostController extends Controller
         $user  = Auth::user();
         $post_id = $request->post_id;
         $content = $request->content;
-        $post = Post::where("id", $post_id)->first();
-
-        $data =   [
-            'userComment' => $user,
-            'post_id' => $post_id,
-            'content' => $content,
-        ];
-
-        if ($post->user_id != $user->id) {
-            event(new NotificationEvent(
-                $post->user_id,
-                "comment_notification",
-                $data,
-            ));
-        }
 
         $comment = new Comment();
         $comment->user_id = $user->id;
@@ -155,11 +150,33 @@ class PostController extends Controller
         $comment->content = $content;
         $comment->save();
 
-        $notification = new Notification();
-        $notification->user_id = $post_id;
-        $notification->type = "comment_notification";
-        $notification->data =  $data;
-        $notification->save();
+        $post = Post::where("id", $post_id)->first();
+
+        if ($post->user_id != $user->id) {
+
+            $data =   [
+                'userComment' => $user,
+                'post_id' => $post_id,
+                'content' => $content,
+            ];
+
+            event(new NotificationEvent(
+                $post->user_id,
+                "comment_notification",
+                $data,
+            ));
+
+            $notification = new Notification();
+            $notification->sender_id = $user->id;
+            $notification->recipient_id =  $post->user_id;
+            $notification->type = "comment_notification";
+            $notification->save();
+
+            $notificationComment = new NotificationComment();
+            $notificationComment->notification_id = $notification->id;
+            $notificationComment->comment_id = $comment->id;
+            $notificationComment->save();
+        }
 
         return response()->json(['status' => 'comment post successfully']);
     }

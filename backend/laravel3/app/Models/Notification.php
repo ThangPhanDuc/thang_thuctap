@@ -13,18 +13,51 @@ class Notification extends Model
     protected $primaryKey = 'id';
     public $timestamps = true;
 
+    // protected $fillable = [
+    //     'sender_id',
+    //     'type',
+    //     'related_id'
+    // ];
+
     protected $fillable = [
-        'user_id',
+        'recipient_id',
+        'sender_id', //truong nay k can thiet
         'type',
-        'data'
     ];
 
-    protected $casts = [
-        'data' => 'array', 
-    ];
+  
+    // public function user()
+    // {
+    //     return $this->belongsTo(User::class);
+    // }
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'recipient_id');
+    }
+
+    public function sender()
+    {
+        return $this->belongsTo(User::class, 'sender_id');
+    }
+
+    public function recipient()
+    {
+        return $this->user;
+    }
+
+    public function likeNotification()
+    {
+        return $this->hasOne(NotificationLike::class);
+    }
+
+    public function commentNotification()
+    {
+        return $this->hasOne(NotificationComment::class);
+    }
+
+    public function friendRequestNotification()
+    {
+        return $this->hasOne(NotificationFriend::class);
     }
 }
