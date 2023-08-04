@@ -1,20 +1,18 @@
-"use client";
 
-import axios from "../api/axios";
+
+
 import "../../styles/Friend.css";
 import 'bootstrap/dist/css/bootstrap.css';
 import 'mdb-react-ui-kit/dist/css/mdb.min.css';
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import Link from 'next/link'
 import Header from "@/components/Header";
 import FriendRequests from "@/components/FriendRequests";
 import AllFriends from "@/components/AllFriends";
-import { useState, useEffect } from "react";
+
 
 
 export default function Friends() {
     const [selectedTab, setSelectedTab] = useState("Friend Requests");
-
 
     return (
         <>

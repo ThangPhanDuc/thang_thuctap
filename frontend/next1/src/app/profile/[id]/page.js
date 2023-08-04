@@ -21,8 +21,9 @@ export default function Profile({ params }) {
 
   const [user, setUser] = useState({});
   const [posts, setPosts] = useState([]);
-  const [friends, setFriends] = useState([]);
   const [photos, setPhotos] = useState([]);
+  const [friendStatus, setFriendStatus] = useState("");
+  const [showFriendRequest, setShowFriendRequest] = useState(false);
 
   const userLogin = useAppSelector((state) => state.userReducer.value);
 
@@ -31,6 +32,7 @@ export default function Profile({ params }) {
     getUserById();
     getPostByUserId();
     getPhotosByUserId();
+    checkFriendshipStatus();
   }, []);
   const getUserById = async () => {
     const token = localStorage.getItem('token');
@@ -79,12 +81,48 @@ export default function Profile({ params }) {
     }
   };
 
+  const checkFriendshipStatus = async () => {
+    const token = localStorage.getItem('token');
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    };
+    try {
+      const response = await axios.get(`/checkFriendshipStatus/${id}`, config);
+      setFriendStatus(response.data);
+      console.log("friend status:" + { friendStatus });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const updateFriendRequestStatus = async (action) => {
+    const token = localStorage.getItem('token');
+    try {
+      await axios.post("/friendRequest", {
+        "friend_id": id,
+        "action": action
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      checkFriendshipStatus();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+
 
 
   return (
     <>
       <Header />
+
       <div className="container">
+
         <div className="profile-page tx-13">
           <div className="row">
             <div className="col-12 grid-margin">
@@ -150,25 +188,49 @@ export default function Profile({ params }) {
                         </div>
                         :
                         <div className="d-none d-md-block d-flex" >
+                          {
+                            friendStatus === "Friends" ? (
+                              <>
+                                <button onClick={() => setShowFriendRequest(!showFriendRequest)} className="btn btn-primary btn-icon-text btn-edit-profile mr-1">
+                                  Friends
+                                </button>
+                                {
+                                  showFriendRequest && <ul
+                                    className="list-group list-group-light "
+                                    style={{ position: 'absolute', marginTop: '-100px', zIndex: 1, marginLeft: '15px' }}
+                                  >
+                                    <button onClick={() => updateFriendRequestStatus("unfriend")} type="button" class="btn btn-light w-100">Unfriend</button>
+                                  </ul>
+                                }
+                              </>
+                            ) : friendStatus === "PendingRequestSent" ? (
+                              <button onClick={() => updateFriendRequestStatus("cancel_request")} className="btn btn-primary btn-icon-text btn-edit-profile mr-1">
+                                Cancel Request
+                              </button>
+                            ) : friendStatus === "PendingRequestReceived" ? (
+                              < >
+                                <button onClick={() => setShowFriendRequest(!showFriendRequest)} className="btn btn-primary btn-icon-text btn-edit-profile mr-1">
+                                  Respond
+                                </button>
+                                {
+                                  showFriendRequest && <ul
+                                    className="list-group list-group-light "
+                                    style={{ position: 'absolute', marginTop: '-120px', zIndex: 1, marginLeft: '15px' }}
+                                  >
+                                    <button onClick={() => updateFriendRequestStatus("accept_request")} type="button" class="btn btn-light w-100">Confirm</button>
+                                    <button onClick={() => updateFriendRequestStatus("reject_request")} type="button" class="btn btn-light w-100">Delete Request</button>
+                                  </ul>
+                                }
 
-                          <button className="btn btn-primary btn-icon-text btn-edit-profile mr-1">
-                            {/* <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width={24}
-                              height={24}
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth={2}
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              className="feather feather-edit btn-icon-prepend"
-                            >
-                              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                            </svg>{" "} */}
-                            Friends
-                          </button>
+                              </>
+                            ) : friendStatus === "NotFriends" ? (
+                              <button onClick={() => updateFriendRequestStatus("send_request")} className="btn btn-primary btn-icon-text btn-edit-profile mr-1">
+                                Add Friends
+                              </button>
+                            ) : null
+                          }
+
+
                           <button className="btn btn-light btn-icon-text btn-edit-profile">
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -432,7 +494,7 @@ export default function Profile({ params }) {
                     </label>
                     <p className="text-muted">{user.phone}</p>
                   </div>
-                  <div className="mt-3 d-flex social-links">
+                  {/* <div className="mt-3 d-flex social-links">
                     <a
                       href="javascript:;"
                       className="btn d-flex align-items-center justify-content-center border mr-2 btn-icon github"
@@ -501,7 +563,7 @@ export default function Profile({ params }) {
                         <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
                       </svg>
                     </a>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
@@ -568,7 +630,7 @@ export default function Profile({ params }) {
                             <p className="tx-11 text-muted">12 Mutual Friends</p>
                           </div>
                         </div>
-                        <button className="btn btn-icon">
+                        {/* <button className="btn btn-icon">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width={24}
@@ -589,183 +651,10 @@ export default function Profile({ params }) {
                             <line x1={20} y1={8} x2={20} y2={14} />
                             <line x1={23} y1={11} x2={17} y2={11} />
                           </svg>
-                        </button>
+                        </button> */}
                       </div>
-                      <div className="d-flex justify-content-between mb-2 pb-2 border-bottom">
-                        <div className="d-flex align-items-center hover-pointer">
-                          <img
-                            className="img-xs rounded-circle"
-                            src="https://bootdey.com/img/Content/avatar/avatar3.png"
-                            alt=""
-                          />
-                          <div className="ml-2">
-                            <p>Mike Popescu</p>
-                            <p className="tx-11 text-muted">12 Mutual Friends</p>
-                          </div>
-                        </div>
-                        <button className="btn btn-icon">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width={24}
-                            height={24}
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className="feather feather-user-plus"
-                            data-toggle="tooltip"
-                            title=""
-                            data-original-title="Connect"
-                          >
-                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                            <circle cx="8.5" cy={7} r={4} />
-                            <line x1={20} y1={8} x2={20} y2={14} />
-                            <line x1={23} y1={11} x2={17} y2={11} />
-                          </svg>
-                        </button>
-                      </div>
-                      <div className="d-flex justify-content-between mb-2 pb-2 border-bottom">
-                        <div className="d-flex align-items-center hover-pointer">
-                          <img
-                            className="img-xs rounded-circle"
-                            src="https://bootdey.com/img/Content/avatar/avatar4.png"
-                            alt=""
-                          />
-                          <div className="ml-2">
-                            <p>Mike Popescu</p>
-                            <p className="tx-11 text-muted">12 Mutual Friends</p>
-                          </div>
-                        </div>
-                        <button className="btn btn-icon">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width={24}
-                            height={24}
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className="feather feather-user-plus"
-                            data-toggle="tooltip"
-                            title=""
-                            data-original-title="Connect"
-                          >
-                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                            <circle cx="8.5" cy={7} r={4} />
-                            <line x1={20} y1={8} x2={20} y2={14} />
-                            <line x1={23} y1={11} x2={17} y2={11} />
-                          </svg>
-                        </button>
-                      </div>
-                      <div className="d-flex justify-content-between mb-2 pb-2 border-bottom">
-                        <div className="d-flex align-items-center hover-pointer">
-                          <img
-                            className="img-xs rounded-circle"
-                            src="https://bootdey.com/img/Content/avatar/avatar5.png"
-                            alt=""
-                          />
-                          <div className="ml-2">
-                            <p>Mike Popescu</p>
-                            <p className="tx-11 text-muted">12 Mutual Friends</p>
-                          </div>
-                        </div>
-                        <button className="btn btn-icon">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width={24}
-                            height={24}
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className="feather feather-user-plus"
-                            data-toggle="tooltip"
-                            title=""
-                            data-original-title="Connect"
-                          >
-                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                            <circle cx="8.5" cy={7} r={4} />
-                            <line x1={20} y1={8} x2={20} y2={14} />
-                            <line x1={23} y1={11} x2={17} y2={11} />
-                          </svg>
-                        </button>
-                      </div>
-                      <div className="d-flex justify-content-between mb-2 pb-2 border-bottom">
-                        <div className="d-flex align-items-center hover-pointer">
-                          <img
-                            className="img-xs rounded-circle"
-                            src="https://bootdey.com/img/Content/avatar/avatar6.png"
-                            alt=""
-                          />
-                          <div className="ml-2">
-                            <p>Mike Popescu</p>
-                            <p className="tx-11 text-muted">12 Mutual Friends</p>
-                          </div>
-                        </div>
-                        <button className="btn btn-icon">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width={24}
-                            height={24}
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className="feather feather-user-plus"
-                            data-toggle="tooltip"
-                            title=""
-                            data-original-title="Connect"
-                          >
-                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                            <circle cx="8.5" cy={7} r={4} />
-                            <line x1={20} y1={8} x2={20} y2={14} />
-                            <line x1={23} y1={11} x2={17} y2={11} />
-                          </svg>
-                        </button>
-                      </div>
-                      <div className="d-flex justify-content-between">
-                        <div className="d-flex align-items-center hover-pointer">
-                          <img
-                            className="img-xs rounded-circle"
-                            src="https://bootdey.com/img/Content/avatar/avatar7.png"
-                            alt=""
-                          />
-                          <div className="ml-2">
-                            <p>Mike Popescu</p>
-                            <p className="tx-11 text-muted">12 Mutual Friends</p>
-                          </div>
-                        </div>
-                        <button className="btn btn-icon">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width={24}
-                            height={24}
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className="feather feather-user-plus"
-                            data-toggle="tooltip"
-                            title=""
-                            data-original-title="Connect"
-                          >
-                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                            <circle cx="8.5" cy={7} r={4} />
-                            <line x1={20} y1={8} x2={20} y2={14} />
-                            <line x1={23} y1={11} x2={17} y2={11} />
-                          </svg>
-                        </button>
-                      </div>
+
+
                     </div>
                   </div>
                 </div>

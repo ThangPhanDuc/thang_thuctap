@@ -13,10 +13,9 @@ class NotificationController extends Controller
     public function getNotification(Request $request)
     {
         $user = Auth::user();
-        $notifications = $user->notifications()->paginate(10);
+        $notifications = $user->notifications()->orderBy('created_at', 'desc')->paginate(10);
 
         foreach ($notifications as $notification) {
-
             switch ($notification->type) {
                 case 'like_notification':
                     $data =   [
@@ -45,11 +44,6 @@ class NotificationController extends Controller
             }
         }
 
-        // $data =   [
-        //     'sender' => $sender,
-        // ];
-
-
-        return $notifications;
+        return response()->json($notifications);
     }
 }

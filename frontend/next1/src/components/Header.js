@@ -21,8 +21,9 @@ export default function Header(props) {
     const [showNotification, setShowNotification] = useState(true);
     const [showMessages, setShowMessages] = useState(false);
     const [searchKeyword, setSearchKeyword] = useState("");
-    const dispatch = useAppDispatch();
+    const [notificationCount, setNotificationCount] = useState(0)
 
+    const dispatch = useAppDispatch();
     const user = useAppSelector((state) => state.userReducer.value);
 
     // useEffect(() => {
@@ -56,6 +57,7 @@ export default function Header(props) {
         channel.bind('new-notification', function (data) {
             // alert(data.userComment.name + "commented on your post: " + data.content);
             setNotifications(prevNotifications => [...prevNotifications, data]);
+            setNotificationCount(notificationCount + 1);
         });
 
     }, [user.id]);
@@ -249,7 +251,12 @@ export default function Header(props) {
                         </li>
                         <li className="nav-item dropdown me-3 me-lg-1">
                             <Link
-                                onClick={() => setShowNotification(!showNotification)}
+                                onClick={() => {
+                                    setShowNotification(!showNotification);
+                                    setNotificationCount(0);
+                                    getNotification();
+                                }
+                                }
                                 className="nav-link dropdown-toggle hidden-arrow"
                                 href="#"
                                 id="navbarDropdownMenuLink"
@@ -259,7 +266,7 @@ export default function Header(props) {
                             >
                                 <i className="fas fa-bell fa-lg" />
                                 <span className="badge rounded-pill badge-notification bg-danger">
-                                    {notifications.length}
+                                    {notificationCount}
                                 </span>
                             </Link>
                             {showNotification && (
@@ -316,7 +323,7 @@ export default function Header(props) {
                     </ul>
                 </div>
             </nav>
-            <div style={{ height: 100,  }}></div>
+            <div style={{ height: 100, }}></div>
 
         </>
     )

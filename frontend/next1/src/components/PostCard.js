@@ -4,11 +4,15 @@ import { useState, useEffect } from "react";
 import Link from 'next/link'
 import axios from "../app/api/axios";
 import { useAppSelector } from "@/redux/hooks";
+import {
+    format, differenceInMinutes, differenceInHours,
+    differenceInDays, differenceInMonths, differenceInMilliseconds
+} from 'date-fns';
+
 
 export default function PostCard(props) {
-    const  postState  = props.post;
-    const [post,setPost]=useState(postState);
-
+    const postState = props.post;
+    const [post, setPost] = useState(postState);
     const user = useAppSelector((state) => state.userReducer.value);
     const [comment, setComment] = useState("");
     const emojis = ["😊", "😂", "😍", "👍", "❤️"];
@@ -49,7 +53,7 @@ export default function PostCard(props) {
         }
     }
 
-    
+
     const getPostById = async () => {
         const token = localStorage.getItem('token');
         const config = {
@@ -65,13 +69,46 @@ export default function PostCard(props) {
         }
     };
 
+    const getFormattedTimeDifference = (inputDate) => {
+        const formattedDate = format(new Date(), 'dd/MM/yyyy, hh:mm:ss');
+
+        const startDate = new Date(inputDate);
+        const endDate = new Date(formattedDate);
+
+        const timeDifferenceInMilliseconds = differenceInMilliseconds(endDate, startDate);
+        var timeDifferenceInMinute = timeDifferenceInMilliseconds / 1000 / 60  ;
+
+        if(timeDifferenceInMilliseconds<=1){
+            return `now`;
+        }else if (timeDifferenceInMinute < 60) {
+            timeDifferenceInMinute = Math.floor(timeDifferenceInMinute)
+            return `${timeDifferenceInMinute} minute ago`;
+        } else if (timeDifferenceInMinute < 24 * 60) {
+            timeDifferenceInMinute = Math.floor(timeDifferenceInMinute / 60)
+            return `${timeDifferenceInMinute} hour ago`;
+        } 
+        // else if (timeDifferenceInMinute < 30 * 24 * 60) {
+        //     timeDifferenceInMinute = Math.floor(timeDifferenceInMinute / 60 / 24)
+        //     return `${timeDifferenceInMinute} day ago`;
+        // } else if (timeDifferenceInMinute < 12 * 30 * 24 * 60) {
+        //     timeDifferenceInMinute = Math.floor(timeDifferenceInMinute / 60 / 24 / 30);
+        //     return `${timeDifferenceInMinute} month ago`;
+        // }
+         else {
+            return inputDate;
+        }
+
+    
+    };
+
+
 
     return (
         <div className="container ">
             <div className="col-md-12 mx-auto  mt-4">
                 <div className="social-feed-box">
                     <div className="social-avatar">
-                        <Link href={"/profile/"+post.user?.id} className="pull-left">
+                        <Link href={"/profile/" + post.user?.id} className="pull-left">
                             <img
                                 alt="image"
                                 src={"http://localhost:8000/" + post.user?.img}
@@ -79,7 +116,7 @@ export default function PostCard(props) {
                         </Link>
                         <div className="media-body">
                             <a href="#">{post.user?.name}</a>
-                            <small className="text-muted">{post.created_at}</small>
+                            <small className="text-muted">{getFormattedTimeDifference(post.created_at)}</small>
                         </div>
                     </div>
                     <div className="social-body">
@@ -100,7 +137,7 @@ export default function PostCard(props) {
                                 className={post.liked_by_user ? "btn btn-primary btn-xs" : "btn btn-white btn-xs"}>
                                 <i className="fa fa-thumbs-up" />
                                 {/* {post.liked_by_user ? `You and ${post.likes_count - 1} others` : `${post.likes_count} like`} */}
-                                { post.likes_count + " like"}
+                                {post.likes_count + " like"}
                             </button>
                             <button className="btn btn-white btn-xs">
                                 <i className="fa fa-comments" /> {post.comments?.length} Comment
@@ -131,7 +168,7 @@ export default function PostCard(props) {
                                                 className="fa fa-thumbs-up"
                                             /> 26 Like this!
                                         </a>{" "}
-                                        -<small className="text-muted">{comment.created_at}</small>
+                                        <small className="text-muted">{getFormattedTimeDifference(comment.created_at)}</small>
                                     </div>
                                 </div>
                             )

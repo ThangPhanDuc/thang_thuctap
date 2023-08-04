@@ -45,6 +45,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('/getFriendRequestsReceived', [FriendController::class, 'getFriendRequestsReceived']);
 
+    Route::get('/checkFriendshipStatus/{friend_id}', [FriendController::class, 'checkFriendshipStatus']);
+
     // message
 
     Route::post('/sentMessage', [ChatController::class, 'sentMessage']);

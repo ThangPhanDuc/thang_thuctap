@@ -49,8 +49,6 @@ class User extends Authenticatable
             ->orderBy('posts.created_at', 'desc');
     }
 
-
-
     //lay danh sach nhung nguoi gui loi moi ken ban den minh
     public function getFriendRequestsReceived()
     {
