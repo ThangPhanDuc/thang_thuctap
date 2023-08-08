@@ -1,5 +1,4 @@
-
-
+"use client";
 
 import "../../styles/Friend.css";
 import 'bootstrap/dist/css/bootstrap.css';
@@ -8,6 +7,7 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import Header from "@/components/Header";
 import FriendRequests from "@/components/FriendRequests";
 import AllFriends from "@/components/AllFriends";
+import { useState } from "react";
 
 
 

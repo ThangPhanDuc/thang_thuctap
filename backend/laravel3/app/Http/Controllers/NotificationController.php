@@ -38,7 +38,6 @@ class NotificationController extends Controller
                     ];
                     $notification->setAttribute('data', $data);
                     break;
-
                 default:
                     break;
             }
