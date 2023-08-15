@@ -9,6 +9,7 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\DatingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -81,4 +82,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     
     Route::get('/getNotification', [NotificationController::class, 'getNotification']);
 
+    //Dating
+
+    Route::post('/getDatingList', [DatingController::class, 'getDatingList']);
+
+    Route::post('/sendDateInvitation', [DatingController::class, 'sendDateInvitation']);
+
+    Route::get('/getReceivedDateInvitations', [DatingController::class, 'getReceivedDateInvitations']);
 });

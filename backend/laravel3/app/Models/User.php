@@ -66,6 +66,10 @@ class User extends Authenticatable
         return $this->hasMany(Notification::class, 'recipient_id');
     }
 
+    public function receivedDateInvites(){
+        return $this->belongsToMany(User::class, 'date_invites', 'receiver_id', 'sender_id');
+    }
+
 
     /**
      * The attributes that should be hidden for serialization.

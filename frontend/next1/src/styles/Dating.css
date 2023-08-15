@@ -1,0 +1,23 @@
+.card {
+  position: relative;
+}
+
+.card .fa-solid {
+  font-size: 24px;
+}
+
+.card .navigation-icons {
+  /* pointer-events: none; */
+  /* position: absolute; */
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+  justify-content: space-between;
+  padding: 0 15px;
+  display: none; 
+}
+
+.card:hover .navigation-icons {
+  display: flex;
+}
+

@@ -1,28 +1,27 @@
 "use client";
 
-import "../../styles/Home.css"
+import "../../styles/Dating.css"
 import axios from "../api/axios";
 import { useState, useEffect } from "react";
-import 'bootstrap/dist/css/bootstrap.css';
 import Link from 'next/link'
-import 'mdb-react-ui-kit/dist/css/mdb.min.css';
-import "@fortawesome/fontawesome-free/css/all.min.css";
-import Header from "@/components/Header";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+
+import Header from "@/components/Header";
 import PostCard from "@/components/PostCard";
 
+import 'bootstrap/dist/css/bootstrap.css';
+import 'mdb-react-ui-kit/dist/css/mdb.min.css';
+import "@fortawesome/fontawesome-free/css/all.min.css";
 
 export default function Home() {
     const user = useAppSelector((state) => state.userReducer.value);
     const [posts, setPosts] = useState([]);
     const [selectedImage, setSelectedImage] = useState(null);
-    const [comment, setComment] = useState("");
     const [contentPost, setContentPost] = useState("");
     const [friends, setFriends] = useState([]);
     const emojis = ["😊", "😂", "😍", "👍", "❤️"];
     const [showEmojis, setShowEmojis] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-
 
     useEffect(() => {
         getAllPost();
@@ -89,42 +88,6 @@ export default function Home() {
             console.error(error);
         }
     }
-
-    const handleLikePost = async (post_id) => {
-        const token = localStorage.getItem('token');
-        try {
-            await axios.post('/likePost', {
-                "post_id": post_id,
-            }, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            getAllPost();
-
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-    const handCommentPost = async (post_id) => {
-        const token = localStorage.getItem('token');
-        try {
-            await axios.post('/commentPost', {
-                post_id: post_id,
-                "content": comment
-            }, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            getAllPost();
-            setComment("");
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
 
     return (
         <>
@@ -196,6 +159,12 @@ export default function Home() {
                             >
                                 Groups
                             </a>
+                            <Link
+                                href="/dating"
+                                className="list-group-home list-group-item list-group-item-action px-3 border-0  ripple "
+                            >
+                                Dating
+                            </Link>
                         </div>
 
                     </div>

@@ -55,7 +55,6 @@ export default function Header(props) {
 
         var channel = pusher.subscribe('notification.' + user.id);
         channel.bind('new-notification', function (data) {
-            // alert(data.userComment.name + "commented on your post: " + data.content);
             setNotifications(prevNotifications => [...prevNotifications, data]);
             setNotificationCount(notificationCount + 1);
         });
