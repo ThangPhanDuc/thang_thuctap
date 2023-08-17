@@ -29,6 +29,7 @@ export default function LikedYou() {
 
     return (
         <>
+            <h1>Like you</h1>
             <ul className="list-group list-group-light">
                 {
                     users.map((user, index) => {

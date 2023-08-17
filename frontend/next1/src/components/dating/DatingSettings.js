@@ -19,12 +19,37 @@ export default function DatingSettings() {
                             <div className="fw-bold">Distance From You</div>
                             <div className="text-muted">Within {idealMatch.distance} kilometers</div>
                         </div>
+                        <div className="d-flex justify-content-between">
+                            <div className="form-outline" style={{ width: "5rem" }}>
+                                <input
+                                    onChange={e => {
+                                        dispatch(setIdealMatch({ ...idealMatch, distance: parseInt(e.target.value) }));
+                                    }}
+                                    // min={18}
+                                    type="number"
+                                    id="typeNumber"
+                                    className="form-control"
+                                />
+                                <label className="form-label" htmlFor="typeNumber">
+                                    Within
+                                </label>
+                            </div>
+
+
+                        </div>
                     </li>
                     <li className="list-group-item d-flex justify-content-between align-items-center">
                         <div>
                             <div className="fw-bold">Gender Identity</div>
                             <div className="text-muted">Women (must have)</div>
                         </div>
+                        <select class="form-select  " aria-label="Default select example" style={{ width: "5rem" }} >
+                            {/* <option selected>Open this select menu</option> */}
+                            <option value="1">Women</option>
+                            <option value="2">Men</option>
+                            <option value="3">Everyone</option>
+                        </select>
+
                     </li>
                     <li className="list-group-item d-flex justify-content-between align-items-center">
                         <div>
@@ -51,7 +76,6 @@ export default function DatingSettings() {
                                     onChange={e => {
                                         dispatch(setIdealMatch({ ...idealMatch, max_age: parseInt(e.target.value) }));
                                     }}
-                                    min={18}
                                     max={50}
                                     type="number"
                                     id="typeNumber"
@@ -119,6 +143,7 @@ export default function DatingSettings() {
                             <div className="fw-bold">Education Levels</div>
                             <div className="text-muted">No preference</div>
                         </div>
+                        
                     </li>
                 </ul>
 

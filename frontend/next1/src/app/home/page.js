@@ -1,6 +1,6 @@
 "use client";
 
-import "../../styles/Dating.css"
+import "../../styles/Home.css"
 import axios from "../api/axios";
 import { useState, useEffect } from "react";
 import Link from 'next/link'

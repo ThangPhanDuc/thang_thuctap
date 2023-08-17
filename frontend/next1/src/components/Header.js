@@ -191,8 +191,6 @@ export default function Header(props) {
                             </a>
                         </li>
                     </ul>
-                    {/* Center elements */}
-                    {/* Right elements */}
                     <ul className="navbar-nav flex-row">
                         <li className="nav-item me-3 me-lg-1">
                             <a className="nav-link d-sm-flex align-items-sm-center" href="#">
@@ -322,7 +320,7 @@ export default function Header(props) {
                     </ul>
                 </div>
             </nav>
-            <div style={{ height: 100, }}></div>
+            <div style={{ height: 65, }}></div>
 
         </>
     )

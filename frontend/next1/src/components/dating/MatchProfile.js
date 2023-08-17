@@ -4,6 +4,7 @@ import axios from "../../app/api/axios";
 import { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import "../../styles/Dating.css"
+import Link from 'next/link'
 
 export default function MatchProfile(props) {
     const { setSelectedTab } = props;
@@ -60,7 +61,7 @@ export default function MatchProfile(props) {
     }
     return (
         <>
-            <div className="d-flex justify-content-around m-3">
+            {/* <div className="d-flex justify-content-around m-3">
                 <div className="">
                     <div className="row">
                         <div class="col-md">
@@ -68,19 +69,21 @@ export default function MatchProfile(props) {
                                 onClick={() => setSelectedTab("LikedYou")}
                                 type="button" className="btn btn-light btn-rounded fw-bold">LikedYou</button>
                             <span className="badge rounded-pill badge-notification bg-danger" style={{ fontSize: "10px" }}>
-                                2
+                                0
                             </span>
                         </div>
                         <div class="col-md">
                             <button type="button" className="btn btn-light btn-rounded fw-bold">Matches</button>
                         </div>
                         <div class="col-md">
-                            <button type="button" className="btn btn-light btn-rounded fw-bold">Profile</button>
+                            <button
+                                onClick={() => setSelectedTab("DatingProfile")}
+                                type="button" className="btn btn-light btn-rounded fw-bold">Profile</button>
                         </div>
                     </div>
                 </div>
 
-            </div>
+            </div> */}
             <div className="card" style={{ borderRadius: 15 }}>
                 <div className="d-flex navigation-icons cart-item">
                     <i onClick={() => handleChangeCurrentPage(-1)} className="fa-solid fa-angle-left"></i>
@@ -94,68 +97,132 @@ export default function MatchProfile(props) {
                                 <div className="mt-3 mb-4">
                                     <img
                                         src={"http://localhost:8000/" + user.img}
+                                        className=""
+                                        style={{ width: 150 }}
+                                    />
+                                    {/* <img
+                                        src={"http://localhost:8000/" + user.img}
                                         className="rounded-circle img-fluid"
                                         style={{ width: 100 }}
-                                    />
+                                    /> */}
                                 </div>
                                 <h4 className="mb-2">{user.name}, {user.age}</h4>
                                 <p className="text-muted mb-4">
                                     @{user.email} <span className="mx-2">|</span>{" "}
                                     <a href="#!">mdbootstrap.com</a>
                                 </p>
-                                {/* <div className="mb-4 pb-2">
-                                    <button
-                                        type="button"
-                                        className="btn btn-outline-primary btn-floating"
-                                    >
-                                        <i className="fab fa-facebook-f fa-lg" />
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="btn btn-outline-primary btn-floating"
-                                    >
-                                        <i className="fab fa-twitter fa-lg" />
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="btn btn-outline-primary btn-floating"
-                                    >
-                                        <i className="fab fa-skype fa-lg" />
-                                    </button>
-                                </div> */}
-                                {/* <button
-                                    type="button"
-                                    className="btn btn-primary btn-rounded btn-lg"
-                                >
-                                    Message now
-                                </button> */}
-                                <div className="d-flex justify-content-end">
+                                <div className="d-flex justify-content-end p-3">
                                     <i
                                         onClick={() => handleChangeCurrentPage(+1)}
-                                        class="fa-solid fa-xmark p-1" style={{ fontSize: "30px" }}></i>
+                                        class="fa-solid fa-xmark p-2 " style={{ fontSize: "40px" }}></i>
                                     <i
                                         onClick={() => sendDateInvitation(user.id)}
-                                        class="fa-regular fa-heart p-1" style={{ fontSize: "30px" }}></i>
+                                        class="fa-regular fa-heart p-2" style={{ fontSize: "40px" }}></i>
                                 </div>
-                                <div className="d-flex justify-content-between text-center mt-5 mb-2">
-                                    <div>
-                                        <p className="mb-2 h5">8471</p>
-                                        <p className="text-muted mb-0">Wallets Balance</p>
-                                    </div>
-                                    <div className="px-3">
-                                        <p className="mb-2 h5">8512</p>
-                                        <p className="text-muted mb-0">Income amounts</p>
-                                    </div>
-                                    <div>
-                                        <p className="mb-2 h5">4751</p>
-                                        <p className="text-muted mb-0">Total Transactions</p>
-                                    </div>
+
+
+
+                                <div>
+                                    <ul className="">
+                                        <li className="list-group-item d-flex align-items-center">
+                                            <span className="icon me-3">
+                                                <i className="fas fa-map-marker-alt"></i>
+                                            </span>
+                                            <div className="flex-fill">
+                                                <div className="fw-bold">Dating Location</div>
+                                                <div className="text-muted">{user.address}</div>
+                                            </div>
+                                        </li>
+
+                                        <li className="list-group-item d-flex align-items-center">
+                                            <span className="icon me-3">
+                                                <i className="fas fa-heart"></i>
+                                            </span>
+                                            <div className="flex-fill">
+                                                <div className="fw-bold">Looking For</div>
+                                                <div className="text-muted">Something Casual</div>
+                                            </div>
+                                        </li>
+                                        <li className="list-group-item d-flex align-items-center">
+                                            <span className="icon me-3">
+                                                <i className="fas fa-ruler-vertical"></i>
+                                            </span>
+                                            <div className="flex-fill">
+                                                <div className="fw-bold">Height</div>
+                                                <div className="text-muted">{user.user_info.height} cm tall</div>
+                                            </div>
+                                        </li>
+                                        <li className="list-group-item d-flex align-items-center">
+                                            <span className="icon me-3">
+                                                <i className="fas fa-home"></i>
+                                            </span>
+                                            <div className="flex-fill">
+                                                <div className="fw-bold">Hometown</div>
+                                                <div className="text-muted">Hà Đông, Hà Nội, Việt Nam</div>
+                                            </div>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
                         )
                     })
                 }
+
+                {/* <div className="card-body p-4 text-black">
+                    <div className="mb-5">
+                        <p className="lead fw-normal mb-1">About</p>
+                        <div className="p-4" style={{ backgroundColor: "#f8f9fa" }}>
+                            <p className="font-italic mb-1">Web Developer</p>
+                            <p className="font-italic mb-1">Lives in New York</p>
+                            <p className="font-italic mb-0">Photographer</p>
+                        </div>
+                    </div>
+                    <div className="d-flex justify-content-between align-items-center mb-4">
+                        <p className="lead fw-normal mb-0">Recent photos</p>
+                        <p className="mb-0">
+                            <a href="#!" className="text-muted">
+                                Show all
+                            </a>
+                        </p>
+                    </div>
+                    <div className="row g-2">
+                        <div className="col mb-2">
+                            <img
+                                src="https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(112).webp"
+                                alt="image 1"
+                                className="w-100 rounded-3"
+                            />
+                        </div>
+                        <div className="col mb-2">
+                            <img
+                                src="https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(107).webp"
+                                alt="image 1"
+                                className="w-100 rounded-3"
+                            />
+                        </div>
+                    </div>
+                    <div className="row g-2">
+                        <div className="col">
+                            <img
+                                src="https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(108).webp"
+                                alt="image 1"
+                                className="w-100 rounded-3"
+                            />
+                        </div>
+                        <div className="col">
+                            <img
+                                src="https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(114).webp"
+                                alt="image 1"
+                                className="w-100 rounded-3"
+                            />
+                        </div>
+                    </div>
+                </div> */}
             </div>
+
+
+
+
         </>
     )
 }

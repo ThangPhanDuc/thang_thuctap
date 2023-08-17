@@ -70,6 +70,11 @@ class User extends Authenticatable
         return $this->belongsToMany(User::class, 'date_invites', 'receiver_id', 'sender_id');
     }
 
+    public function userInfo()
+    {
+        return $this->hasOne(UserInfo::class);
+    }
+
 
     /**
      * The attributes that should be hidden for serialization.
