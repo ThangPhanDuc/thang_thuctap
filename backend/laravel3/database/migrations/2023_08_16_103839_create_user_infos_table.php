@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
 
             $table->unsignedBigInteger('user_id'); 
-            $table->text('interests')->nullable(); 
+            // $table->text('interests')->nullable(); 
             $table->string('education')->nullable(); 
             $table->string('relationship_status')->nullable(); 
             $table->string('dating_goal')->nullable(); 

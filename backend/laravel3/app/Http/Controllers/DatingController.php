@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
-use App\Models\DateInvite;
+use App\Models\DatingInvitation;
 use App\Models\UserInfo;
+
 
 class DatingController extends Controller
 {
@@ -14,12 +15,16 @@ class DatingController extends Controller
     {
         $user = Auth::user();
         $userInfo = $user->userInfo;
-    
+        $datingCriteria = $user->datingCriteria;
+
         $minAge = $request->min_age;
         $maxAge = $request->max_age;
         $minHeight = $request->min_height;
         $maxHeight = $request->max_height;
         $interests = $request->interests;
+        $education = $datingCriteria->education;
+        $datingGoal = $userInfo->dating_goal;
+
 
         $datingMatches = User::where('gender', '!=', $user->gender)
             ->whereBetween('age', [$minAge, $maxAge])
@@ -28,6 +33,16 @@ class DatingController extends Controller
             })
             ->whereHas('userInfo', function ($query) use ($interests) {
                 $query->where('interests', 'LIKE', "%{$interests}%");
+            })
+            ->when($education !== 'No Preference', function ($query) use ($education) {
+                $query->whereHas('userInfo', function ($q) use ($education) {
+                    $q->where('education', '=', $education);
+                });
+            })
+            ->when($datingGoal, function ($query) use ($datingGoal) {
+                $query->whereHas('userInfo', function ($q) use ($datingGoal) {
+                    $q->where('dating_goal', '=', $datingGoal);
+                });
             })
             ->orderByRaw("ABS(age - {$user->age})")
             ->with('userInfo')
@@ -41,7 +56,7 @@ class DatingController extends Controller
         $user = Auth::user();
         $receiver_id = $request->receiver_id;
 
-        $dateInvites = new DateInvite();
+        $dateInvites = new DatingInvitation();
         $dateInvites->sender_id = $user->id;
         $dateInvites->receiver_id = $receiver_id;
         $dateInvites->save();
@@ -53,8 +68,10 @@ class DatingController extends Controller
     {
         $user = Auth::user();
 
-        $receivedInvitations = $user->receivedDateInvites()->paginate(10);
+        $receivedInvitations = $user->receivedDatingInvitations()->paginate(10);
 
         return response()->json($receivedInvitations);
     }
+
+    // public function 
 }

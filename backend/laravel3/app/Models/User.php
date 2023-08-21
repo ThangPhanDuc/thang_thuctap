@@ -65,14 +65,19 @@ class User extends Authenticatable
     {
         return $this->hasMany(Notification::class, 'recipient_id');
     }
-
-    public function receivedDateInvites(){
-        return $this->belongsToMany(User::class, 'date_invites', 'receiver_id', 'sender_id');
+    
+    public function receivedDatingInvitations(){
+        return $this->belongsToMany(User::class, 'dating_invitations', 'receiver_id', 'sender_id');
     }
 
     public function userInfo()
     {
         return $this->hasOne(UserInfo::class);
+    }
+
+    public function datingCriteria()
+    {
+        return $this->hasOne(DatingCriteria::class);
     }
 
 

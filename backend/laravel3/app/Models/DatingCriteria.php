@@ -5,31 +5,27 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class UserInfo extends Model
+class DatingCriteria extends Model
 {
     use HasFactory;
 
-    protected $table = 'user_infos';
+    protected $table = 'dating_criterias';
     protected $primaryKey = 'id';
     public $timestamps = true;
 
     protected $fillable = [
         'user_id',
-        'interests',
+        'min_age',
+        'max_age',
+        'min_height',
+        'max_height',
         'education',
         'relationship_status',
-        'dating_goal',
-        'height',
-        'religion'
+        'dating_goal'
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function interests()
-    {
-        return $this->hasMany(Interest::class);
     }
 }

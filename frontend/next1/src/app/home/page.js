@@ -95,18 +95,6 @@ export default function Home() {
             <div className="container gedf-wrapper">
                 <div className="row">
                     <div className="col-md-3">
-                        {/* <div className="d-flex align-items-center mb-3">
-                            <img
-                                 src={"http://localhost:8000/" + user.img}
-                                alt=""
-                                style={{ width: 30, height: 30 }}
-                                className="rounded-circle"
-                            />
-                            <div className="ms-3">
-                                <p className="fw-bold mb-1">{user.name}</p>
-                            </div>
-                        </div> */}
-
                         <div className="card">
                             <Link href={"profile/" + user.id}>
                                 <div className="card-body">

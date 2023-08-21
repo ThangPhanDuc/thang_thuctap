@@ -6,7 +6,9 @@ const initialState = {
     "max_age":55,
     "min_height":150,
     "max_height":185,
-    "distance":80
+    "distance":80,
+    "gender":"",
+    "educationLevel":"No preference"
   },
 } ;
 

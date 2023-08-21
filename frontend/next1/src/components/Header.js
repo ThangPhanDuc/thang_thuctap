@@ -181,14 +181,14 @@ export default function Header(props) {
                             </a>
                         </li>
                         <li className="nav-item me-3 me-lg-1">
-                            <a className="nav-link" href="#">
+                            <Link className="nav-link" href="/dating">
                                 <span>
                                     <i className="fas fa-users fa-lg" />
                                 </span>
                                 <span className="badge rounded-pill badge-notification bg-danger">
                                     2
                                 </span>
-                            </a>
+                            </Link>
                         </li>
                     </ul>
                     <ul className="navbar-nav flex-row">

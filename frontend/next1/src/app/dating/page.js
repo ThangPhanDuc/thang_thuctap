@@ -85,6 +85,12 @@ export default function Dating() {
                             >
                                 Dating
                             </Link>
+                            <Link
+                                href="/dating"
+                                className="list-group-home list-group-item list-group-item-action px-3 border-0  ripple "
+                            >
+                                Liked You
+                            </Link>
                         </div>
 
                     </div>

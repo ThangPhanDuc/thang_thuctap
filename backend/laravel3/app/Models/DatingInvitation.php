@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class DateInvite extends Model
+class DatingInvitation extends Model
 {
     use HasFactory;
 
-    protected $table = 'date_invites';
+    protected $table = 'dating_invitations';
     protected $primaryKey = 'id';
     public $timestamps = true;
 
@@ -28,5 +28,3 @@ class DateInvite extends Model
         return $this->belongsTo(User::class, 'receiver_id');
     }
 }
-
-

@@ -13,17 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('date_invites', function (Blueprint $table) {
+        Schema::create('interests', function (Blueprint $table) {
             $table->id();
 
-            $table->unsignedBigInteger('sender_id');
-            $table->unsignedBigInteger('receiver_id');
-            $table->string('status')->nullable();;
-
+            $table->unsignedBigInteger('user_info_id'); 
+            $table->string('name');
             $table->timestamps();
 
-            $table->foreign('sender_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('receiver_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('user_info_id')->references('id')->on('user_infos')->onDelete('cascade');
         });
     }
 
@@ -34,8 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('date_invites');
+        Schema::dropIfExists('interests');
     }
 };
-
-
