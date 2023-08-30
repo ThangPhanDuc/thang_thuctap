@@ -17,9 +17,44 @@ use Illuminate\Pagination\Paginator;
 use App\Models\Notification;
 use App\Models\NotificationLike;
 use App\Models\NotificationComment;
+use App\Models\Video;
 
 class PostController extends Controller
 {
+    // public function createPost(Request $request)
+    // {
+    //     $user = Auth::user();
+    //     $user_id = $user->id;
+    //     $content = $request->content;
+
+    //     $post = new Post();
+    //     $post->user_id = $user_id;
+    //     $post->content = $content;
+    //     $post->save();
+
+    //     //save image
+    //     $images = $request->file('images');
+    //     $imageName = time() . '_' . $images->getClientOriginalName();
+    //     $images->move(public_path('Post_Images'), $imageName);
+
+    //     $photo = new Photo();
+    //     $photo->post_id = $post->id;
+    //     $photo->path = 'Post_Images/' . $imageName;
+    //     $photo->save();
+
+    //     // //save video
+    //     $videos = $request->file('videos');
+    //     $videoName = time() . '_' . $videos->getClientOriginalName();
+    //     $videos->move(public_path('Post_Videos'), $videoName);
+
+    //     $videoFile = new Video();
+    //     $videoFile->post_id = $post->id;
+    //     $videoFile->path = 'Post_Videos/' . $videoName;
+    //     $videoFile->save();
+
+    //     return response()->json(['status' => 'create post successfully']);
+    // }
+
     public function createPost(Request $request)
     {
         $user = Auth::user();
@@ -31,15 +66,30 @@ class PostController extends Controller
         $post->content = $content;
         $post->save();
 
-        $images = $request->file('images');
-        $imageName = time() . '_' . $images->getClientOriginalName();
-        $images->move(public_path('Post_Images'), $imageName);
+        // //save media
+        $mediaFiles = $request->file('media');
 
-        $photo = new Photo();
-        $photo->post_id = $post->id;
-        $photo->path = 'Post_Images/' . $imageName;
-        $photo->save();
-
+        foreach ($mediaFiles as $media) {
+            $mediaName = time() . '_' . $media->getClientOriginalName();
+            $mediaExtension = $media->getClientOriginalExtension();
+    
+            if (in_array($mediaExtension, ['jpg', 'jpeg', 'png', 'gif'])) {
+                $media->move(public_path('Post_Images'), $mediaName);
+    
+                $photo = new Photo();
+                $photo->post_id = $post->id;
+                $photo->path = 'Post_Images/' . $mediaName;
+                $photo->save();
+            } elseif (in_array($mediaExtension, ['mp4', 'mov'])) {
+                $media->move(public_path('Post_Videos'), $mediaName);
+    
+                $videoFile = new Video();
+                $videoFile->post_id = $post->id;
+                $videoFile->path = 'Post_Videos/' . $mediaName;
+                $videoFile->save();
+            }
+        }
+    
         return response()->json(['status' => 'create post successfully']);
     }
 
@@ -60,7 +110,7 @@ class PostController extends Controller
         $user = Auth::user();
         $post_id = $request->id;
         $post = Post::where('id', $post_id)
-            ->with('user', 'photos', 'comments.user')
+            ->with('user', 'photos', 'comments.user', 'videos')
             ->withCount('likes')
             ->first();
 
@@ -77,7 +127,7 @@ class PostController extends Controller
         $userLogin = Auth::user();
         $user_id = $request->id;
         $posts = Post::where("user_id", $user_id)
-            ->with('user', 'comments.user', 'photos')
+            ->with('user', 'comments.user', 'photos', 'videos')
             ->withCount('likes')
             ->orderBy('posts.created_at', 'desc')
             ->paginate(10);
@@ -88,7 +138,6 @@ class PostController extends Controller
 
         return response()->json($posts);
     }
-
 
     public function likePost(Request $request)
     {

@@ -73,5 +73,7 @@ class DatingController extends Controller
         return response()->json($receivedInvitations);
     }
 
-    // public function 
+    public function updateDatingCriteria(Request $request){
+        
+    }
 }

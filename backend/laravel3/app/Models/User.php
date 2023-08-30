@@ -28,8 +28,7 @@ class User extends Authenticatable
     public function posts()
     {
         return $this->hasMany(Post::class, 'user_id')
-            // ->where('friends.status', 'accepted')
-            ->with('user', 'comments.user', 'photos')
+            ->with('user', 'comments.user', 'photos','videos')
             ->withCount('likes')
             ->orderBy('posts.created_at', 'desc');
     }
@@ -44,7 +43,7 @@ class User extends Authenticatable
     {
         return $this->hasManyThrough(Post::class, Friend::class, 'user_id', 'user_id', 'id', 'friend_id')
             ->where('friends.status', 'accepted')
-            ->with('user', 'comments.user', 'photos')
+            ->with('user', 'comments.user', 'photos','videos')
             ->withCount('likes')
             ->orderBy('posts.created_at', 'desc');
     }

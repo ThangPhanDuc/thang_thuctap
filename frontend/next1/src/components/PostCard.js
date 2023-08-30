@@ -76,17 +76,17 @@ export default function PostCard(props) {
         const endDate = new Date(formattedDate);
 
         const timeDifferenceInMilliseconds = differenceInMilliseconds(endDate, startDate);
-        var timeDifferenceInMinute = timeDifferenceInMilliseconds / 1000 / 60  ;
+        var timeDifferenceInMinute = timeDifferenceInMilliseconds / 1000 / 60;
 
-        if(timeDifferenceInMilliseconds<=1){
+        if (timeDifferenceInMilliseconds <= 1) {
             return `now`;
-        }else if (timeDifferenceInMinute < 60) {
+        } else if (timeDifferenceInMinute < 60) {
             timeDifferenceInMinute = Math.floor(timeDifferenceInMinute)
             return `${timeDifferenceInMinute} minute ago`;
         } else if (timeDifferenceInMinute < 24 * 60) {
             timeDifferenceInMinute = Math.floor(timeDifferenceInMinute / 60)
             return `${timeDifferenceInMinute} hour ago`;
-        } 
+        }
         // else if (timeDifferenceInMinute < 30 * 24 * 60) {
         //     timeDifferenceInMinute = Math.floor(timeDifferenceInMinute / 60 / 24)
         //     return `${timeDifferenceInMinute} day ago`;
@@ -94,11 +94,11 @@ export default function PostCard(props) {
         //     timeDifferenceInMinute = Math.floor(timeDifferenceInMinute / 60 / 24 / 30);
         //     return `${timeDifferenceInMinute} month ago`;
         // }
-         else {
+        else {
             return inputDate;
         }
 
-    
+
     };
 
 
@@ -116,7 +116,10 @@ export default function PostCard(props) {
                         </Link>
                         <div className="media-body">
                             <a href="#">{post.user?.name}</a>
-                            <small className="text-muted">{getFormattedTimeDifference(post.created_at)}</small>
+                            <small className="text-muted">
+                                {/* 2h */}
+                                {getFormattedTimeDifference(post.created_at)}
+                            </small>
                         </div>
                     </div>
                     <div className="social-body">
@@ -131,6 +134,20 @@ export default function PostCard(props) {
                                 />
                             )
                         })}
+
+                        {post.videos?.map((video, index) => {
+                            return (
+                                <video
+                                    key={index}
+                                    controls
+                                    className="video-responsive"
+                                >
+                                    <source src={"http://localhost:8000/" + video.path} type="video/mp4" />
+                                    Your browser does not support the video tag.
+                                </video>
+                            );
+                        })}
+
                         <div className="btn-group">
                             <button
                                 onClick={() => handleLikePost(post.id)}
@@ -168,7 +185,10 @@ export default function PostCard(props) {
                                                 className="fa fa-thumbs-up"
                                             /> 26 Like this!
                                         </a>{" "}
-                                        <small className="text-muted">{getFormattedTimeDifference(comment.created_at)}</small>
+                                        <small className="text-muted">
+                                            {/* 1h */}
+                                            {getFormattedTimeDifference(comment.created_at)}
+                                        </small>
                                     </div>
                                 </div>
                             )

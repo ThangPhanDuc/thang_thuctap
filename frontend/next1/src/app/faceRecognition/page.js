@@ -106,3 +106,105 @@ export default function FaceRecognition() {
         </>
     )
 }
+
+// "use client";
+
+// import axios from 'axios';
+// import Header from "@/components/Header";
+// import { useState } from "react";
+
+// import 'bootstrap/dist/css/bootstrap.css';
+// import 'mdb-react-ui-kit/dist/css/mdb.min.css';
+// import "@fortawesome/fontawesome-free/css/all.min.css";
+
+// export default function FaceRecognition() {
+//     const [selectedImage, setSelectedImage] = useState(null);
+//     const [usersSearch, setUsersSearch] = useState([]);
+
+//     const FaceRecognitionSearch = async (event) => {
+//         event.preventDefault();
+//         const token = localStorage.getItem('token');
+
+//         const formData = new FormData();
+//         formData.append("image", selectedImage);
+
+//         try {
+//             const response = await axios.post("http://127.0.0.1:5000/recognize", formData, {
+//                 headers: {
+//                     Authorization: `Bearer ${token}`,
+//                     "Content-Type": "multipart/form-data",
+//                 },
+//             });
+//             console.log(response.data);
+//             setUsersSearch(response.data)
+//             // setSelectedImage(null);
+//         } catch (error) {
+//             console.error(error);
+//         }
+//     }
+
+//     return (
+//         <>
+//             <Header />
+//             <div className="col-lg-4 col-md-4 col-sm-12 mx-auto">
+//                 <form onSubmit={FaceRecognitionSearch} className="mb-4">
+//                     {selectedImage &&
+//                         <div className="d-flex align-items-center">
+//                             <img
+//                                 src={URL.createObjectURL(selectedImage)}
+//                                 alt="avatar"
+//                                 className="img-fluid m-3"
+//                                 style={{ width: 150 }}
+//                             />
+//                             <button onClick={() => setSelectedImage(null)} className="btn btn-link text-danger">
+//                                 <i className="fas fa-times"></i>
+//                             </button>
+//                         </div>
+//                     }
+//                     <div className="mb-3">
+//                         <label className="form-label">Upload an image for face search</label>
+//                         <input
+//                             onChange={(event) => {
+//                                 setSelectedImage(event.target.files[0]);
+//                             }}
+//                             className="form-control" type="file" accept="image/*" multiple={false} />
+//                     </div>
+//                     <button type="submit" className="btn btn-primary">
+//                         Search by Face
+//                     </button>
+//                 </form>
+
+//                 <h1>Matching Users</h1>
+//                 {usersSearch.length === 0 && (
+//                     <p className="text-muted">No matching users found.</p>
+//                 )}
+//                 <ul className="list-group list-group-light">
+//                     {
+//                         usersSearch.map((user, index) => {
+//                             return (
+//                                 <div key={index}>
+//                                     {user.id && (
+//                                         <li className="list-group-item d-flex justify-content-between align-items-center">
+//                                             <div className="d-flex align-items-center">
+//                                                 <img
+//                                                     src={"http://localhost:8000/" + user.img}
+//                                                     alt=""
+//                                                     style={{ width: 60, height: 60 }}
+//                                                     className="rounded-circle"
+//                                                 />
+//                                                 <div className="ms-3">
+//                                                     <p className="fw-bold mb-1">{user.name}</p>
+//                                                     <p className="text-muted mb-0">{user.email}</p>
+//                                                 </div>
+//                                             </div>
+//                                         </li>
+//                                     )}
+//                                 </div>
+//                             )
+//                         })
+//                     }
+//                 </ul>
+//             </div>
+//         </>
+//     )
+// }

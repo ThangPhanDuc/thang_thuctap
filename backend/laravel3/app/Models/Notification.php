@@ -21,15 +21,10 @@ class Notification extends Model
 
     protected $fillable = [
         'recipient_id',
-        'sender_id', //truong nay k can thiet
+        'sender_id', 
         'type',
     ];
 
-  
-    // public function user()
-    // {
-    //     return $this->belongsTo(User::class);
-    // }
 
     public function user()
     {

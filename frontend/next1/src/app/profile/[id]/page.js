@@ -607,8 +607,6 @@ export default function Profile({ params }) {
                               </div>
                             )
                           })}
-
-
                         </div>
                       </div>
                     </div>

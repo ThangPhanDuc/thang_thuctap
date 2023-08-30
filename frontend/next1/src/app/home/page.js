@@ -22,6 +22,7 @@ export default function Home() {
     const emojis = ["😊", "😂", "😍", "👍", "❤️"];
     const [showEmojis, setShowEmojis] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
+    const [selectedFiles, setSelectedFiles] = useState([]);
 
     useEffect(() => {
         getAllPost();
@@ -70,7 +71,10 @@ export default function Home() {
         const token = localStorage.getItem('token');
 
         const formData = new FormData();
-        formData.append("images", selectedImage);
+        // formData.append("images", selectedImage);
+        for (let i = 0; i < selectedFiles.length; i++) {
+            formData.append("media[]", selectedFiles[i]);
+        }
         formData.append("content", contentPost)
 
         try {
@@ -81,13 +85,20 @@ export default function Home() {
                 },
             });
             setContentPost("");
-            setSelectedImage(null);
+            setSelectedFiles([]);
             getAllPost();
 
         } catch (error) {
             console.error(error);
         }
     }
+
+    const handleRemoveFile = (indexToRemove) => {
+        setSelectedFiles(prevSelectedFiles => {
+            const updatedFiles = prevSelectedFiles.filter((file, index) => index !== indexToRemove);
+            return updatedFiles;
+        });
+    };
 
     return (
         <>
@@ -244,7 +255,7 @@ export default function Home() {
                                             <div className="py-4" />
                                         </div>
                                     </div>
-                                    {selectedImage &&
+                                    {/* {selectedImage &&
                                         <div className="d-flex align-items-center">
                                             <img
                                                 src={URL.createObjectURL(selectedImage)}
@@ -261,6 +272,38 @@ export default function Home() {
                                             console.log(event.target.files);
                                             setSelectedImage(event.target.files[0]);
                                         }}
+                                    ></input> */}
+
+                                    {
+                                        Array.isArray(selectedFiles) && selectedFiles.length > 0 ? (
+                                            selectedFiles.map((file, index) => (
+                                                <div key={index} className="d-flex align-items-center">
+                                                    {file.type.startsWith("image/") ? (
+                                                        <img
+                                                            src={URL.createObjectURL(file)}
+                                                            alt={`image-${index}`}
+                                                            className="img-fluid m-3"
+                                                            style={{ width: 150 }}
+                                                        />
+                                                    ) : (
+                                                        <video
+                                                            controls
+                                                            className="video-responsive"
+                                                            style={{ width: 150 }}
+                                                        >
+                                                            <source src={URL.createObjectURL(file)} type="video/mp4" />
+                                                            Your browser does not support the video tag.
+                                                        </video>
+                                                    )}
+                                                    <button onClick={() => handleRemoveFile(index)}>X</button>
+                                                </div>
+                                            ))
+                                        ) : null
+                                    }
+
+                                    <input
+                                        class="form-control" type="file" id="formFile" multiple
+                                        onChange={(event) => setSelectedFiles(Array.from(event.target.files))}
                                     ></input>
                                     <div className="btn-toolbar justify-content-between">
                                         <div className="btn-group">

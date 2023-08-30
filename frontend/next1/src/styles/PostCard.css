@@ -58,6 +58,11 @@ body{margin-top:20px;}
 .social-body img {
   margin-bottom: 10px;
 }
+.social-body video {
+  margin-bottom: 10px;
+  width: 580px;
+  /* height: 100px; */
+}
 .social-footer {
   border-top: 1px solid #e7eaec;
   padding: 10px 15px;

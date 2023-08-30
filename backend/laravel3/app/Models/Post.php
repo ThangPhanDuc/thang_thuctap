@@ -29,6 +29,11 @@ class Post extends Model
         return $this->hasMany(Photo::class, 'post_id');
     }
 
+    public function videos()
+    {
+        return $this->hasMany(Video::class, 'post_id');
+    }
+
     public function likes()
     {
         return $this->hasMany(Like::class, 'post_id');
