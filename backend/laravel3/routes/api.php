@@ -10,6 +10,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\DatingController;
+use App\Http\Controllers\VideoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -89,4 +90,17 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/sendDateInvitation', [DatingController::class, 'sendDateInvitation']);
 
     Route::get('/getReceivedDateInvitations', [DatingController::class, 'getReceivedDateInvitations']);
+
+    //video
+
+    Route::get('/getVideos', [VideoController::class, 'getVideos']);
+
+    Route::post('/likeVideo', [VideoController::class, 'likeVideo']);
+
+    Route::post('/commentVideo', [VideoController::class, 'commentVideo']);
+
+    Route::get('/videos/{videoId}', [VideoController::class, 'getVideoById']);
+
+    Route::post('/searchVideos', [VideoController::class, 'searchVideos']);
+
 });

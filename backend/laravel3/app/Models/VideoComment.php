@@ -6,42 +6,28 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 
-class Video extends Model
+class VideoComment extends Model
 {
     use HasFactory;
 
-    protected $table = 'videos';
+    protected $table = 'video_comments';
     protected $primaryKey = 'id';
     public $timestamps = true;
 
     protected $fillable = [
-        'post_id',
-        'path',
+        'user_id',
+        'video_id',
+        'content',
     ];
 
-    public function post()
+    public function user()
     {
-        return $this->belongsTo(Post::class, 'post_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function likes()
+    public function video()
     {
-        return $this->hasMany(VideoLike::class, 'video_id');
-    }
-
-    public function likesCount()
-    {
-        return $this->likes()->count();
-    }
-
-    public function comments()
-    {
-        return $this->hasMany(VideoComment::class, 'video_id');
-    }
-
-    public function commentsCount()
-    {
-        return $this->comments()->count();
+        return $this->belongsTo(Video::class, 'video_id');
     }
 
     public function getCreatedAtAttribute($value)
