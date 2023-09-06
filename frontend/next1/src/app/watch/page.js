@@ -14,6 +14,7 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 
 export default function Watch() {
     const [videos, setVideos] = useState([]);
+    const [keyword, setKeyword] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
@@ -36,6 +37,22 @@ export default function Watch() {
         }
     };
 
+    const searchVideo = async () => {
+        const token = localStorage.getItem('token');
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        };
+        try {
+            const response = await axios.get(`/searchVideos?query=${keyword}`, config);
+            setVideos(response.data.data);
+
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     return (
         <>
             <>
@@ -44,52 +61,65 @@ export default function Watch() {
                     <div className="row">
                         <div className="col-md-3">
                             <div>
-                                <div>
-                                    <h1>Video</h1>
+                                <div className="d-flex text-center justify-content-between">
+                                    <h3 className="fw-bolder">Video</h3>
                                     <i
 
                                         className="fa-solid fa-gear" style={{ fontSize: "20px", float: "right" }}></i>
                                 </div>
-                                <input type="text" placeholder="search video"></input>
+
+                                <div className="input-group rounded">
+
+                                    <span onClick={searchVideo} className="input-group-text border-0" id="search-addon">
+                                        <i className="fas fa-search" />
+                                    </span>
+                                    <input
+                                        onChange={(e) => setKeyword(e.target.value)}
+                                        value={keyword}
+                                        type="search"
+                                        className="form-control rounded"
+                                        placeholder="Search"
+                                        aria-label="Search"
+                                        aria-describedby="search-addon"
+                                    />
+
+                                </div>
+
+
+
                             </div>
 
 
-                            <div className="list-group list-group-light ">
-                                <Link
-                                    href="/friends"
-                                    className="list-group-home list-group-item list-group-item-action px-3 border-0  ripple "
-                                >
-                                    Home
+                            <div className="list-group list-group-light mt-2">
+                                <Link href="/friends" className="list-group-home list-group-item list-group-item-action px-3 border-0">
+                                    <span>
+                                        <i className="fas fa-home fa-lg" />
+                                    </span> Home
                                 </Link>
-                                <Link
-                                    href="#"
-                                    className=" list-group-home list-group-item list-group-item-action px-3 border-0 ripple "
-                                >
-                                    Like
+                                <Link href="#" className="list-group-home list-group-item list-group-item-action px-3 border-0 ripple">
+                                    <span>
+                                        <i className="fas fa-circle fa-xs text-danger" />
+                                    </span> Live
                                 </Link>
-                                <Link
-                                    href="#"
-                                    className="list-group-home list-group-item list-group-item-action px-3 border-0 ripple"
-                                >
-                                    Reels
+                                <Link href="#" className="list-group-home list-group-item list-group-item-action px-3 border-0 ripple">
+                                    <span>
+                                        <i className="fas fa-video fa-lg" />
+                                    </span> Reels
                                 </Link>
-                                <Link
-                                    href="#"
-                                    className="list-group-home list-group-item list-group-item-action px-3 border-0 ripple"
-                                >
-                                    Shows
+                                <Link href="#" className="list-group-home list-group-item list-group-item-action px-3 border-0 ripple">
+                                    <span>
+                                        <i className="fas fa-tv fa-lg" />
+                                    </span> Shows
                                 </Link>
-                                <Link
-                                    href="/dating"
-                                    className="list-group-home list-group-item list-group-item-action px-3 border-0  ripple "
-                                >
-                                    Explore
+                                <Link href="/" className="list-group-home list-group-item list-group-item-action px-3 border-0 ripple">
+                                    <span>
+                                        <i className="fas fa-compass fa-lg" />
+                                    </span> Explore
                                 </Link>
-                                <Link
-                                    href="/dating"
-                                    className="list-group-home list-group-item list-group-item-action px-3 border-0  ripple "
-                                >
-                                    Saves Videos
+                                <Link href="/" className="list-group-home list-group-item list-group-item-action px-3 border-0 ripple">
+                                    <span>
+                                        <i className="fas fa-save fa-lg" />
+                                    </span> Saves Videos
                                 </Link>
                             </div>
 

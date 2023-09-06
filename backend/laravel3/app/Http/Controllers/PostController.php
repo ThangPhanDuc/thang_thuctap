@@ -21,39 +21,6 @@ use App\Models\Video;
 
 class PostController extends Controller
 {
-    // public function createPost(Request $request)
-    // {
-    //     $user = Auth::user();
-    //     $user_id = $user->id;
-    //     $content = $request->content;
-
-    //     $post = new Post();
-    //     $post->user_id = $user_id;
-    //     $post->content = $content;
-    //     $post->save();
-
-    //     //save image
-    //     $images = $request->file('images');
-    //     $imageName = time() . '_' . $images->getClientOriginalName();
-    //     $images->move(public_path('Post_Images'), $imageName);
-
-    //     $photo = new Photo();
-    //     $photo->post_id = $post->id;
-    //     $photo->path = 'Post_Images/' . $imageName;
-    //     $photo->save();
-
-    //     // //save video
-    //     $videos = $request->file('videos');
-    //     $videoName = time() . '_' . $videos->getClientOriginalName();
-    //     $videos->move(public_path('Post_Videos'), $videoName);
-
-    //     $videoFile = new Video();
-    //     $videoFile->post_id = $post->id;
-    //     $videoFile->path = 'Post_Videos/' . $videoName;
-    //     $videoFile->save();
-
-    //     return response()->json(['status' => 'create post successfully']);
-    // }
 
     public function createPost(Request $request)
     {
@@ -96,7 +63,7 @@ class PostController extends Controller
     public function getFriendPosts(Request $request)
     {
         $user = Auth::user();
-        $friendsPosts = $user->friendPosts()->paginate(100);
+        $friendsPosts = $user->friendPosts()->paginate(10);
 
         foreach ($friendsPosts as $post) {
             $post->liked_by_user = $post->likes()->where('user_id', $user->id)->exists();

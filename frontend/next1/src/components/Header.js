@@ -167,11 +167,11 @@ export default function Header(props) {
                             </a>
                         </li>
                         <li className="nav-item me-3 me-lg-1">
-                            <a className="nav-link" href="#">
+                            <Link className="nav-link" href="/watch">
                                 <span>
                                     <i className="fas fa-video fa-lg" />
                                 </span>
-                            </a>
+                            </Link>
                         </li>
                         <li className="nav-item me-3 me-lg-1">
                             <a className="nav-link" href="#">
@@ -197,7 +197,8 @@ export default function Header(props) {
                                 <img
                                     src={"http://localhost:8000/" + user.img}
                                     className="rounded-circle"
-                                    height={22}
+                                    height={25}
+                                    width={25}
                                     alt="Black and White Portrait of a Man"
                                     loading="lazy"
                                 />

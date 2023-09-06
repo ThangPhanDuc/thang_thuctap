@@ -65,6 +65,29 @@ export default function VideoCard(props) {
         }
     };
 
+    function formatTimeDistance(timestamp) {
+        const now = new Date();
+        const timeDiff = now - new Date(timestamp);
+      
+        const seconds = timeDiff / 1000;
+        const minutes = seconds / 60;
+        const hours = minutes / 60;
+        const days = hours / 24;
+        const months = days / 30;
+      
+        if (months >= 1) {
+          return `${Math.floor(months)}m`;
+        } else if (days >= 1) {
+          return `${Math.floor(days)}d`;
+        } else if (hours >= 1) {
+          return `${Math.floor(hours)}h`;
+        } else if (minutes >= 1) {
+          return `${Math.floor(minutes)}m`;
+        } else {
+          return `${Math.floor(seconds)}s`;
+        }
+      }
+
     return (
         <>
             <div className="container ">
@@ -81,7 +104,7 @@ export default function VideoCard(props) {
                                 <a href="#">{video.post?.user.name}</a>
                                 <small className="text-muted">
                                     {/* 2h */}
-                                    {video.created_at}
+                                    {formatTimeDistance(video.created_at)}
                                 </small>
                             </div>
                         </div>

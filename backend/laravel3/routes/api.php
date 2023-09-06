@@ -11,6 +11,7 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\DatingController;
 use App\Http\Controllers\VideoController;
+use App\Http\Controllers\GroupController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,7 +29,7 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
- 
+
     Route::get('/user', [UserController::class, 'getUser']);
 
     Route::post('/updateUser', [UserController::class, 'updateUser']);
@@ -80,7 +81,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/getPhotosByUserId/{id}', [UserController::class, 'getPhotosByUserId']);
 
     //notifications
-    
+
     Route::get('/getNotification', [NotificationController::class, 'getNotification']);
 
     //Dating
@@ -101,6 +102,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('/videos/{videoId}', [VideoController::class, 'getVideoById']);
 
-    Route::post('/searchVideos', [VideoController::class, 'searchVideos']);
+    Route::get('/searchVideos', [VideoController::class, 'searchVideos']);
 
+    //group
+
+    Route::post('/groups/create', [GroupController::class, 'createGroup']);
+
+    Route::post('/groups/invite', [GroupController::class, 'inviteToGroup']);
+
+    Route::post('/groups/request', [GroupController::class, 'requestToJoinGroup']);
+
+    Route::get('/groups/{groupId}/requests', [GroupController::class, 'getGroupRequests']);
 });
