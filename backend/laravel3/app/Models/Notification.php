@@ -13,18 +13,11 @@ class Notification extends Model
     protected $primaryKey = 'id';
     public $timestamps = true;
 
-    // protected $fillable = [
-    //     'sender_id',
-    //     'type',
-    //     'related_id'
-    // ];
-
     protected $fillable = [
         'recipient_id',
         'sender_id', 
         'type',
     ];
-
 
     public function user()
     {

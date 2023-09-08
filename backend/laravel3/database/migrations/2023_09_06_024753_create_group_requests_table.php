@@ -18,7 +18,6 @@ return new class extends Migration
 
             $table->unsignedBigInteger('group_id');
             $table->unsignedBigInteger('user_id');
-            $table->string('status')->nullable();
             $table->timestamps();
 
             $table->foreign('group_id')->references('id')->on('groups')->onDelete('cascade');

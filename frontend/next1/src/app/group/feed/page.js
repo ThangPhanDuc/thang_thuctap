@@ -1,18 +1,16 @@
 "use client";
 
-import axios from "../api/axios";
+import axios from "../../api/axios";
 import { useState, useEffect } from "react";
 import Link from 'next/link'
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 
+
 import Header from "@/components/Header";
-import VideoCard from "@/components/VideoCard";
+import GroupInvitation from "@/components/groups/GroupInvitation";
 
-import 'bootstrap/dist/css/bootstrap.css';
-import 'mdb-react-ui-kit/dist/css/mdb.min.css';
-import "@fortawesome/fontawesome-free/css/all.min.css";
+export default function Feed() {
 
-export default function Group() {
 
     return (
         <>
@@ -68,7 +66,10 @@ export default function Group() {
                                         </span> Your groups
                                     </Link>
                                 </div>
-                                <button type="button" className="btn btn-secondary w-100 font-weight-bold">+ Create New Group</button>
+                                <Link href={"/group/create"} >
+                                    <button type="button" className="btn btn-secondary w-100 font-weight-bold">+ Create New Group</button>
+                                </Link>
+
                                 <hr></hr>
                             </div>
                             <div>
@@ -159,10 +160,13 @@ export default function Group() {
                             </div>
 
                         </div>
-                        <div className="col-md-9 gedf-main " >
+                        <div className="col-md-6 gedf-main " >
                             <p className="fw-bolder">Recent activity</p>
 
 
+                        </div>
+                        <div className="col-md-3 gedf-main " >
+                            <GroupInvitation />
                         </div>
 
                     </div>

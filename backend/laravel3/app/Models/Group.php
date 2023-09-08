@@ -29,9 +29,13 @@ class Group extends Model
         return $this->hasMany(GroupUser::class, 'group_id');
     }
 
-    public function pendingJoinRequests()
+    public function users()
     {
-        return $this->hasManyThrough(User::class, GroupRequest::class, 'group_id', 'id', 'id', 'user_id')
-            ->where('group_requests.status', 'pending');
+        return $this->groupUsers()->with('user')->get();
+    }
+
+    public function joinRequests()
+    {
+        return $this->hasManyThrough(User::class, GroupRequest::class, 'group_id', 'id', 'id', 'user_id');
     }
 }

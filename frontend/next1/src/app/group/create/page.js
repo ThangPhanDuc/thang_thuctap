@@ -3,7 +3,7 @@
 import axios from "../../api/axios";
 import { useState, useEffect } from "react";
 import Link from 'next/link'
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useAppSelector } from "@/redux/hooks";
 
 import Header from "@/components/Header";
 
@@ -13,6 +13,30 @@ import 'mdb-react-ui-kit/dist/css/mdb.min.css';
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
 export default function GroupCreate() {
+    const user = useAppSelector((state) => state.userReducer.value);
+
+    const [groupName, setGroupName] = useState("");
+    const [privacy, setPrivacy] = useState("public");
+
+
+    const createGroup = async (e) => {
+        e.preventDefault();
+        const token = localStorage.getItem('token');
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        };
+        try {
+            const response = await axios.post('/groups/create', {
+                "name": groupName,
+                "privacy": privacy
+            }, config);
+            alert(response.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     return (
 
@@ -34,21 +58,22 @@ export default function GroupCreate() {
                             <div className="list-group-item d-flex justify-content-between align-items-center mt-3">
                                 <div className="d-flex align-items-center">
                                     <img
-                                        src="https://mdbootstrap.com/img/new/avatars/6.jpg"
+                                        src={"http://localhost:8000/" + user.img}
                                         className="rounded-circle"
                                         alt=""
                                         style={{ width: 45, height: 45 }}
                                     />
                                     <div className="ms-3">
-                                        <p className="fw-bold mb-1">Alex Ray</p>
+                                        <p className="fw-bold mb-1">{user.name}</p>
                                         <p className="text-muted mb-0">admin</p>
                                     </div>
                                 </div>
 
                             </div>
-                            <form>
+                            <form onSubmit={e=>createGroup(e)}>
                                 <div className="form-outline border border-secondary rounded-2 mt-3">
                                     <input
+                                        onChange={e => setGroupName(e.target.value)}
                                         type="text"
                                         id="formControlLg"
                                         className="form-control form-control-lg"
@@ -60,13 +85,14 @@ export default function GroupCreate() {
 
                                 <div className="form-outline border border-secondary rounded-2 mt-3">
                                     <select
+                                        onChange={e => setPrivacy(e.target.value)}
                                         className="form-select"
                                         aria-label="Disabled select example"
                                         disabled=""
                                     >
                                         <option selected="">Choose Privacy</option>
-                                        <option value={1}>Public</option>
-                                        <option value={2}>Private</option>
+                                        <option value={"public"}>Public</option>
+                                        <option value={"private"}>Private</option>
 
                                     </select>
 
@@ -86,9 +112,7 @@ export default function GroupCreate() {
                                     </select>
                                 </div>
 
-
-
-                                <button type="button" className="btn btn-primary w-100 mt-3">Create</button>
+                                <button type="submit" className="btn btn-primary w-100 mt-3">Create</button>
                             </form>
                         </div>
 

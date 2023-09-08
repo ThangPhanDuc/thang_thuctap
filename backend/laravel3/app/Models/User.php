@@ -28,7 +28,7 @@ class User extends Authenticatable
     public function posts()
     {
         return $this->hasMany(Post::class, 'user_id')
-            ->with('user', 'comments.user', 'photos','videos')
+            ->with('user', 'comments.user', 'photos', 'videos')
             ->withCount('likes')
             ->orderBy('posts.created_at', 'desc');
     }
@@ -43,7 +43,7 @@ class User extends Authenticatable
     {
         return $this->hasManyThrough(Post::class, Friend::class, 'user_id', 'user_id', 'id', 'friend_id')
             ->where('friends.status', 'accepted')
-            ->with('user', 'comments.user', 'photos','videos')
+            ->with('user', 'comments.user', 'photos', 'videos')
             ->withCount('likes')
             ->orderBy('posts.created_at', 'desc');
     }
@@ -64,8 +64,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Notification::class, 'recipient_id');
     }
-    
-    public function receivedDatingInvitations(){
+
+    public function receivedDatingInvitations()
+    {
         return $this->belongsToMany(User::class, 'dating_invitations', 'receiver_id', 'sender_id');
     }
 
@@ -77,6 +78,11 @@ class User extends Authenticatable
     public function datingCriteria()
     {
         return $this->hasOne(DatingCriteria::class);
+    }
+
+    public function groupInvitations()
+    {
+        return $this->hasMany(GroupInvitation::class, 'receiver_id');
     }
 
 

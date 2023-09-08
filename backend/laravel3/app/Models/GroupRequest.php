@@ -17,7 +17,6 @@ class GroupRequest extends Model
     protected $fillable = [
         'group_id',
         'user_id',
-        'status',
     ];
 
     public function group()
@@ -33,6 +32,5 @@ class GroupRequest extends Model
     public function acceptedUsers()
     {
         return $this->belongsToMany(User::class, 'group_requests', 'group_id', 'user_id');
-            // ->wherePivot('status', 'accepted');
     }
 }

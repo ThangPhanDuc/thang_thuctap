@@ -17,7 +17,6 @@ class GroupInvitation extends Model
         'group_id',
         'sender_id',
         'receiver_id',
-        'status',
     ];
 
     public function group()

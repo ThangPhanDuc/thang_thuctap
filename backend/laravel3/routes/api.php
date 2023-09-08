@@ -108,9 +108,17 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::post('/groups/create', [GroupController::class, 'createGroup']);
 
-    Route::post('/groups/invite', [GroupController::class, 'inviteToGroup']);
+    Route::post('/groups/invite', [GroupController::class, 'sendInvitationToJoinGroup']);
 
-    Route::post('/groups/request', [GroupController::class, 'requestToJoinGroup']);
+    Route::post('/groups/request', [GroupController::class, 'sendJoinRequestToGroup']);
 
     Route::get('/groups/{groupId}/requests', [GroupController::class, 'getGroupRequests']);
+
+    Route::get('/groups/invitations', [GroupController::class, 'getUserGroupInvitations']);
+
+    Route::put('groups/join-request', [GroupController::class, 'handleJoinRequestToGroup']);
+
+    Route::put('groups/join-invitations', [GroupController::class, 'handleInvitationToJoinGroup']);
+
+    Route::get('groups/{groupId}', [GroupController::class, 'getGroupById']);
 });

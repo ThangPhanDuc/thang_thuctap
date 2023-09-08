@@ -23,7 +23,6 @@ export default function Dating() {
     return (
         <>
             <Header />
-
             <div className="container gedf-wrapper">
                 <div className="row">
                     <div className="col-md-3">

@@ -17,9 +17,7 @@ import LikeNotification from "./notifications/LikeNotification";
 export default function Header(props) {
 
     const [notifications, setNotifications] = useState([]);
-    const [messages, setMessages] = useState([]);
     const [showNotification, setShowNotification] = useState(false);
-    const [showMessages, setShowMessages] = useState(false);
     const [searchKeyword, setSearchKeyword] = useState("");
     const [notificationCount, setNotificationCount] = useState(0)
 
