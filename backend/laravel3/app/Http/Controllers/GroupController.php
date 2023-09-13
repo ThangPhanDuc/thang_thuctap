@@ -33,15 +33,15 @@ class GroupController extends Controller
 
         return response()->json("Group has been successfully created");
     }
-
+    
     public function getGroupById(Request $request, $groupId)
     {
-        $group = Group::find($groupId);
-
+        $group = Group::with('groupUsers.user')->find($groupId);
+    
         if (!$group) {
             return response()->json("Group not found", 404);
         }
-
+    
         return response()->json($group);
     }
 

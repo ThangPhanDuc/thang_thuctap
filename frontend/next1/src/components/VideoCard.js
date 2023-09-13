@@ -119,7 +119,7 @@ export default function VideoCard(props) {
                                 controls
                                 className="video-responsive w-100"
                             >
-                                <source src={"http://localhost:8000/" + video.path} type="video/mp4" />
+                                <source src={video.path} type="video/mp4" />
                                 Your browser does not support the video tag.
                             </video>
 

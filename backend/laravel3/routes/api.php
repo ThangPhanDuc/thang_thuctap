@@ -72,6 +72,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::post('/commentPost', [PostController::class, 'commentPost']);
 
+    Route::post('/sharePost', [PostController::class, 'sharePost']);
+
     // search
 
     Route::get('/getPostByKeyword', [SearchController::class, 'getPostByKeyword']);

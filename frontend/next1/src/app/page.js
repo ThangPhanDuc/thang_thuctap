@@ -27,7 +27,7 @@ export default function Home() {
         localStorage.setItem("token", res.data.access_token)
         // Cookies.set('token', res.data.message);
       }
-      router.push("/listUser");
+      router.push("/home");
     } catch (error) {
       console.log(error);
       alert("Incorrect Email or Password")

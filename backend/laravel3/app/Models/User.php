@@ -41,7 +41,14 @@ class User extends Authenticatable
 
     public function friendPosts()
     {
-        return $this->hasManyThrough(Post::class, Friend::class, 'user_id', 'user_id', 'id', 'friend_id')
+        return $this->hasManyThrough(
+            Post::class,
+            Friend::class,
+            'user_id',
+            'user_id',
+            'id',
+            'friend_id'
+        )
             ->where('friends.status', 'accepted')
             ->with('user', 'comments.user', 'photos', 'videos')
             ->withCount('likes')
@@ -84,6 +91,18 @@ class User extends Authenticatable
     {
         return $this->hasMany(GroupInvitation::class, 'receiver_id');
     }
+
+    // public function groupPosts()
+    // {
+    //     return $this->hasManyThrough(
+    //         GroupPost::class,
+    //         GroupUser::class,
+    //         'user_id',
+    //         'group_id',
+    //         'id',
+    //         'group_id'
+    //     )->with('photos', 'videos');
+    // }
 
 
     /**

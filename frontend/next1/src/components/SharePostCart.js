@@ -10,14 +10,13 @@ import {
 } from 'date-fns';
 
 
-export default function PostCard(props) {
+export default function SharePostCard(props) {
     const postState = props.post;
     const [post, setPost] = useState(postState);
     const user = useAppSelector((state) => state.userReducer.value);
     const [comment, setComment] = useState("");
     const emojis = ["😊", "😂", "😍", "👍", "❤️"];
     const [showEmojis, setShowEmojis] = useState(false);
-
 
     const handCommentPost = async (post_id, event) => {
         event.preventDefault();
@@ -65,7 +64,7 @@ export default function PostCard(props) {
                 },
             });
             alert(response.data.data)
-
+          
         } catch (error) {
             console.log(error);
         }
@@ -145,7 +144,7 @@ export default function PostCard(props) {
                         {post.photos?.map((photo, index) => {
                             return (
                                 <img
-                                    src={photo.path}
+                                    src={"http://localhost:8000/" + photo.path}
                                     className="img-responsive"
                                 />
                             )
@@ -158,7 +157,7 @@ export default function PostCard(props) {
                                     controls
                                     className="video-responsive"
                                 >
-                                    <source src={video.path} type="video/mp4" />
+                                    <source src={"http://localhost:8000/" + video.path} type="video/mp4" />
                                     Your browser does not support the video tag.
                                 </video>
                             );

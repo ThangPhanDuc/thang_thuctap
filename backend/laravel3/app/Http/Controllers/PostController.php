@@ -18,9 +18,75 @@ use App\Models\Notification;
 use App\Models\NotificationLike;
 use App\Models\NotificationComment;
 use App\Models\Video;
+use App\Models\SharedPost;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
+
+    // public function createPost(Request $request)
+    // {
+    //     $user = Auth::user();
+    //     $user_id = $user->id;
+    //     $content = $request->content;
+
+    //     $post = new Post();
+    //     $post->user_id = $user_id;
+    //     $post->content = $content;
+    //     $post->save();
+
+    //     //save media
+    //     $mediaFiles = $request->file('media');
+
+    //     foreach ($mediaFiles as $media) {
+    //         $mediaName = time() . '_' . $media->getClientOriginalName();
+    //         $mediaExtension = $media->getClientOriginalExtension();
+
+    //         if (in_array($mediaExtension, ['jpg', 'jpeg', 'png', 'gif'])) {
+    //             $media->move(public_path('Post_Images'), $mediaName);
+
+    //             $photo = new Photo();
+    //             $photo->post_id = $post->id;
+    //             $photo->path = 'Post_Images/' . $mediaName;
+    //             $photo->save();
+    //         } elseif (in_array($mediaExtension, ['mp4', 'mov'])) {
+    //             $media->move(public_path('Post_Videos'), $mediaName);
+
+    //             $videoFile = new Video();
+    //             $videoFile->post_id = $post->id;
+    //             $videoFile->path = 'Post_Videos/' . $mediaName;
+    //             $videoFile->save();
+    //         }
+    //     }
+
+    //     return response()->json(['status' => 'create post successfully']);
+    // }
+
+    // public function createPost(Request $request)
+    // {
+    //     $image = $request->file('image');
+
+    //     // Kiểm tra xem có tệp hình ảnh được gửi lên không
+    //     if ($image) {
+    //         // Đặt tên thư mục trên Cloudinary
+    //         $folderName = 'post_images';
+
+    //         // Tải lên hình ảnh và lưu vào thư mục trên Cloudinary
+    //         $uploadedImage = Cloudinary::upload($image->getRealPath(), [
+    //             'folder' => $folderName,
+    //         ]);
+
+    //         // Lấy URL xem trước của hình ảnh
+    //         $imageUrl = $uploadedImage->getSecurePath();
+
+    //         // Trả về URL xem trước của hình ảnh
+    //         return response()->json(['image_url' => $imageUrl]);
+    //     }
+
+    //     // Trả về thông báo lỗi nếu không có tệp hình ảnh được gửi lên
+    //     return response()->json(['error' => 'No image file found.']);
+    // }
 
     public function createPost(Request $request)
     {
@@ -33,32 +99,41 @@ class PostController extends Controller
         $post->content = $content;
         $post->save();
 
-        // //save media
+        //save media
         $mediaFiles = $request->file('media');
 
         foreach ($mediaFiles as $media) {
             $mediaName = time() . '_' . $media->getClientOriginalName();
             $mediaExtension = $media->getClientOriginalExtension();
-    
+
             if (in_array($mediaExtension, ['jpg', 'jpeg', 'png', 'gif'])) {
-                $media->move(public_path('Post_Images'), $mediaName);
-    
+                $uploadedImage = Cloudinary::upload($media->getRealPath(), [
+                    'folder' => "Post_Images",
+                ]);
+                $imageUrl = $uploadedImage->getSecurePath();
+
                 $photo = new Photo();
                 $photo->post_id = $post->id;
-                $photo->path = 'Post_Images/' . $mediaName;
+                $photo->path =  $imageUrl;
                 $photo->save();
             } elseif (in_array($mediaExtension, ['mp4', 'mov'])) {
-                $media->move(public_path('Post_Videos'), $mediaName);
-    
+                $uploadedVideo = Cloudinary::upload($media->getRealPath(), [
+                    'folder' => "Post_Videos",
+                    "resource_type" => "video",
+                ]);
+                $videoUrl = $uploadedVideo->getSecurePath();
+
                 $videoFile = new Video();
                 $videoFile->post_id = $post->id;
-                $videoFile->path = 'Post_Videos/' . $mediaName;
+                $videoFile->path = $videoUrl;
                 $videoFile->save();
             }
         }
-    
+
         return response()->json(['status' => 'create post successfully']);
     }
+
+
 
     public function getFriendPosts(Request $request)
     {
@@ -71,6 +146,33 @@ class PostController extends Controller
 
         return $friendsPosts;
     }
+
+    // public function getAllPost(Request $request)
+    // {
+    //     $user = Auth::user();
+    //     $friendsPosts = $user->friendPosts()->paginate(10);
+
+    //     $userPosts = $user->posts()->paginate(10);
+
+    //     $groupPosts = $user->groupPosts()->paginate(10);
+
+
+
+    //     $combinedPosts = [
+    //         'friends' => $friendsPosts,
+    //         'user' => $userPosts,
+    //         'group' => $groupPosts,
+    //     ];
+
+
+
+
+    //     // foreach ($friendsPosts as $post) {
+    //     //     $post->liked_by_user = $post->likes()->where('user_id', $user->id)->exists();
+    //     // }
+
+    //     return $combinedPosts;
+    // }
 
     public function getPostById(Request $request)
     {
@@ -195,5 +297,18 @@ class PostController extends Controller
         }
 
         return response()->json(['status' => 'comment post successfully']);
+    }
+
+    public function sharePost(Request $request)
+    {
+        $user = Auth::user();
+        $post_id = $request->post_id;
+
+        $sharedPost = new SharedPost();
+        $sharedPost->user_id = $user->id;
+        $sharedPost->post_id = $post_id;
+        $sharedPost->save();
+
+        return response()->json(['message' => 'Post has been successfully shared'], 200);
     }
 }
